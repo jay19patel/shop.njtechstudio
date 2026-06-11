@@ -138,7 +138,7 @@ const MyOrdersPage = () => {
           {!loading && searched && (
             <>
               {orders.length === 0 ? (
-                <div className="bg-white rounded-[40px] p-16 text-center flex flex-col items-center gap-8 border border-slate-100 shadow-xl shadow-slate-200/30/40 animate-in fade-in zoom-in duration-500">
+                <div className="bg-white rounded-[40px] p-16 text-center flex flex-col items-center gap-8 border border-slate-100 shadow-xl shadow-slate-200/40 animate-in fade-in zoom-in duration-500">
                   <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center text-slate-200">
                     <ShoppingBag className="w-12 h-12" strokeWidth={1.5} />
                   </div>
@@ -150,7 +150,7 @@ const MyOrdersPage = () => {
                   </div>
                   <Link
                     href="/shop"
-                    className="bg-slate-1000 text-white px-10 py-4 rounded-full font-black uppercase tracking-widest text-xs shadow-xl shadow-orange-100 hover:bg-orange-600 transition-all active:scale-95"
+                    className="bg-slate-900 text-white px-10 py-4 rounded-full font-black uppercase tracking-widest text-xs shadow-xl shadow-slate-200 hover:bg-slate-900/90 transition-all active:scale-95"
                   >
                     Start Shopping
                   </Link>
@@ -160,7 +160,7 @@ const MyOrdersPage = () => {
                   {orders.map((order) => (
                     <div
                       key={order.id}
-                      className="bg-white rounded-[40px] border border-slate-100 shadow-xl shadow-slate-200/30/30 overflow-hidden hover:shadow-2xl hover:shadow-slate-200/50 transition-all duration-500 group animate-in slide-in-from-bottom-4"
+                      className="bg-white rounded-[40px] border border-slate-100 shadow-lg shadow-slate-200/40 overflow-hidden hover:shadow-xl hover:shadow-slate-200/60 transition-all duration-500 group animate-in slide-in-from-bottom-4"
                     >
                       <div className="p-8 md:p-10 flex flex-col gap-8">
                         {/* Order Meta */}
@@ -227,7 +227,7 @@ const MyOrdersPage = () => {
 
           {/* Not searched yet — hint for logged out */}
           {!isAuthenticated && !searched && !loading && (
-            <div className="bg-white rounded-[40px] p-16 text-center flex flex-col items-center gap-6 border border-slate-100 shadow-xl shadow-slate-200/30/30">
+            <div className="bg-white rounded-[40px] p-16 text-center flex flex-col items-center gap-6 border border-slate-100 shadow-lg shadow-slate-200/40">
               <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center text-blue-300">
                 <Package className="w-10 h-10" strokeWidth={1.5} />
               </div>

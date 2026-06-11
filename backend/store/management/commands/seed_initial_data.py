@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from django.core.management.base import BaseCommand
 
-from store.models import Category, Product, ProductImage, ProductVariant, Testimonial
+from store.models import Category, Product, ProductImage, Testimonial
 
 
 CATEGORIES = [
@@ -41,10 +41,7 @@ PRODUCTS = [
         "description": "A deep blue ocean-inspired wall clock with hand-poured white wave details.",
         "base_price": "2499.00",
         "image_url": "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=1200&q=80",
-        "variants": [
-            {"sku": "RES-CLK-OCN-12", "size": "12 Inch", "color": "Ocean Blue", "stock": 15},
-            {"sku": "RES-CLK-OCN-16", "size": "16 Inch", "color": "Ocean Blue", "stock": 6, "price_override": "3499.00"},
-        ],
+        "available_quantity": 21,
     },
     {
         "category": "resin-art",
@@ -53,9 +50,7 @@ PRODUCTS = [
         "description": "A glossy emerald green tray accented with gold edges for festive hosting.",
         "base_price": "1850.00",
         "image_url": "https://images.unsplash.com/photo-1610701596007-11502861dcfa?auto=format&fit=crop&w=1200&q=80",
-        "variants": [
-            {"sku": "RES-TRY-EMD-STD", "size": "Standard", "color": "Emerald Green", "stock": 18},
-        ],
+        "available_quantity": 18,
     },
     {
         "category": "resin-art",
@@ -64,9 +59,7 @@ PRODUCTS = [
         "description": "A four-piece coaster set with purple geode tones and a gold painted rim.",
         "base_price": "1100.00",
         "image_url": "https://images.unsplash.com/photo-1604014237800-1c9102c219da?auto=format&fit=crop&w=1200&q=80",
-        "variants": [
-            {"sku": "RES-CST-AMY-4", "size": "4 Piece Set", "color": "Purple Gold", "stock": 30},
-        ],
+        "available_quantity": 30,
     },
     {
         "category": "resin-art",
@@ -75,9 +68,7 @@ PRODUCTS = [
         "description": "A delicate bookmark with preserved botanicals and a soft tassel finish.",
         "base_price": "299.00",
         "image_url": "https://images.unsplash.com/photo-1519682337058-a94d519337bc?auto=format&fit=crop&w=1200&q=80",
-        "variants": [
-            {"sku": "RES-BKM-FLR", "size": "Standard", "color": "Assorted Florals", "stock": 45},
-        ],
+        "available_quantity": 45,
     },
     {
         "category": "aesthetic-soaps",
@@ -86,9 +77,7 @@ PRODUCTS = [
         "description": "A calming lavender bar blended with pink clay for a gentle daily cleanse.",
         "base_price": "350.00",
         "image_url": "https://images.unsplash.com/photo-1600857544200-b2f666a9a2ec?auto=format&fit=crop&w=1200&q=80",
-        "variants": [
-            {"sku": "SOAP-LAV-120", "size": "120g", "color": "Lavender Pink", "stock": 50},
-        ],
+        "available_quantity": 50,
     },
     {
         "category": "aesthetic-soaps",
@@ -97,9 +86,7 @@ PRODUCTS = [
         "description": "Activated charcoal with bright citrus notes for a clean, fresh bathing ritual.",
         "base_price": "300.00",
         "image_url": "https://images.unsplash.com/photo-1607006483224-93463de8e717?auto=format&fit=crop&w=1200&q=80",
-        "variants": [
-            {"sku": "SOAP-CHR-120", "size": "120g", "color": "Charcoal Black", "stock": 42},
-        ],
+        "available_quantity": 42,
     },
     {
         "category": "aesthetic-soaps",
@@ -108,9 +95,7 @@ PRODUCTS = [
         "description": "A textured scrub bar with rose fragrance and mineral-rich pink salt.",
         "base_price": "400.00",
         "image_url": "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&w=1200&q=80",
-        "variants": [
-            {"sku": "SOAP-HIM-130", "size": "130g", "color": "Rose Pink", "stock": 38},
-        ],
+        "available_quantity": 38,
     },
     {
         "category": "home-decor",
@@ -119,9 +104,7 @@ PRODUCTS = [
         "description": "A matte ceramic vase for dried flowers, pampas, or a clean shelf styling moment.",
         "base_price": "1299.00",
         "image_url": "https://images.unsplash.com/photo-1581783342308-f792dbdd27c5?auto=format&fit=crop&w=1200&q=80",
-        "variants": [
-            {"sku": "DEC-VAS-WHT-M", "size": "Medium", "color": "Matte White", "stock": 25},
-        ],
+        "available_quantity": 25,
     },
     {
         "category": "home-decor",
@@ -130,9 +113,7 @@ PRODUCTS = [
         "description": "A boho wall hanging made with natural cotton cord and layered knotwork.",
         "base_price": "1599.00",
         "image_url": "https://images.unsplash.com/photo-1515546200212-07a8fc5d4ec3?auto=format&fit=crop&w=1200&q=80",
-        "variants": [
-            {"sku": "DEC-MAC-LRG", "size": "Large", "color": "Natural Beige", "stock": 10},
-        ],
+        "available_quantity": 10,
     },
     {
         "category": "accessories",
@@ -141,9 +122,7 @@ PRODUCTS = [
         "description": "A lightweight pendant with tiny preserved flowers sealed in crystal-clear resin.",
         "base_price": "699.00",
         "image_url": "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1200&q=80",
-        "variants": [
-            {"sku": "ACC-PND-FLR", "size": "Adjustable Chain", "color": "Clear Floral", "stock": 22},
-        ],
+        "available_quantity": 22,
     },
 ]
 
@@ -181,7 +160,7 @@ TESTIMONIALS = [
 
 
 class Command(BaseCommand):
-    help = "Seed starter categories, products, variants, images, and testimonials."
+    help = "Seed starter categories, products, images, and testimonials."
 
     def handle(self, *args, **options):
         categories = {}
@@ -204,6 +183,7 @@ class Command(BaseCommand):
                     "name": item["name"],
                     "description": item["description"],
                     "base_price": Decimal(item["base_price"]),
+                    "available_quantity": item.get("available_quantity", 0),
                     "is_active": True,
                 },
             )
@@ -212,18 +192,6 @@ class Command(BaseCommand):
                 is_primary=True,
                 defaults={"image_url": item["image_url"]},
             )
-            for variant_item in item["variants"]:
-                price_override = variant_item.get("price_override")
-                ProductVariant.objects.update_or_create(
-                    sku=variant_item["sku"],
-                    defaults={
-                        "product": product,
-                        "size": variant_item["size"],
-                        "color": variant_item["color"],
-                        "stock": variant_item["stock"],
-                        "price_override": Decimal(price_override) if price_override else None,
-                    },
-                )
 
         for item in TESTIMONIALS:
             Testimonial.objects.update_or_create(

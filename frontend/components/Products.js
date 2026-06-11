@@ -124,9 +124,9 @@ const Products = () => {
                       </svg>
                     </div>
                   )}
-                  {prod.tag && (
+                  {(prod.tag || (prod.hasDiscount ? 'Offer' : null)) && (
                     <div className="absolute top-4 left-4 px-2.5 py-1 bg-white/90 backdrop-blur-md rounded-lg text-[9px] font-bold uppercase tracking-wider text-slate-700 shadow-sm border border-slate-100">
-                      {prod.tag}
+                      {prod.tag || 'Offer'}
                     </div>
                   )}
                 </div>
@@ -137,10 +137,25 @@ const Products = () => {
                     <h3 className="text-sm font-semibold text-slate-800 group-hover:text-slate-600 transition-colors duration-200 line-clamp-1">
                       {prod.name}
                     </h3>
-                    <span className="text-sm font-bold text-slate-900 shrink-0">{prod.priceDisplay}</span>
+                    <div className="flex flex-col items-end whitespace-nowrap shrink-0">
+                      {prod.hasDiscount ? (
+                        <>
+                          <span className="text-sm font-bold text-slate-900">
+                            {prod.discountedPriceDisplay}
+                          </span>
+                          <span className="text-[9px] font-medium text-slate-400 line-through">
+                            {prod.priceDisplay}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-sm font-bold text-slate-900">
+                          {prod.priceDisplay}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <span className="text-xs text-slate-500 font-medium capitalize">
-                    {prod.category || 'Creations'}
+                    {(typeof prod.category === 'object' ? prod.category?.name : prod.category) || 'Creations'}
                   </span>
                 </div>
               </Link>

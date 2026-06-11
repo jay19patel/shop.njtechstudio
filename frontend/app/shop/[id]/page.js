@@ -177,9 +177,26 @@ const ProductDetailPage = () => {
               <h1 className="text-2xl md:text-4xl font-bold tracking-tight text-slate-900 leading-tight">
                 {product.name}
               </h1>
-              <p className="text-xl md:text-2xl font-bold text-slate-900">
-                {product.priceDisplay}
-              </p>
+              <div className="flex items-center gap-3">
+                {product.hasDiscount ? (
+                  <>
+                    <p className="text-xl md:text-2xl font-black text-slate-900">
+                      {product.discountedPriceDisplay}
+                    </p>
+                    <p className="text-lg font-bold text-slate-400 line-through">
+                      {product.priceDisplay}
+                    </p>
+                    <span className="bg-orange-100 text-orange-600 text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-md">
+                      {product.discountPercentage}% OFF
+                    </span>
+                  </>
+                ) : (
+                  <p className="text-xl md:text-2xl font-black text-slate-900">
+                    {product.priceDisplay}
+                  </p>
+                )}
+              </div>
+
             </div>
 
             <div className="h-px bg-slate-50 w-full" />
@@ -210,16 +227,16 @@ const ProductDetailPage = () => {
               {/* Stock badge */}
               <div className="flex items-center gap-2">
                 <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                  product.stock > 5
+                  product.availableQuantity > 5
                     ? 'bg-green-50 text-green-600'
-                    : product.stock > 0
+                    : product.availableQuantity > 0
                     ? 'bg-slate-100 text-orange-600'
                     : 'bg-red-50 text-red-500'
                 }`}>
                   <span className={`w-1.5 h-1.5 rounded-full ${
-                    product.stock > 5 ? 'bg-green-500' : product.stock > 0 ? 'bg-orange-400' : 'bg-red-400'
+                    product.availableQuantity > 5 ? 'bg-green-500' : product.availableQuantity > 0 ? 'bg-orange-400' : 'bg-red-400'
                   }`} />
-                  {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
+                  {product.availableQuantity > 0 ? `${product.availableQuantity} in stock` : 'Out of stock'}
                 </span>
               </div>
             </div>
@@ -229,7 +246,7 @@ const ProductDetailPage = () => {
               <div className="flex gap-3 md:gap-4">
                 <button
                   onClick={handleBuyNow}
-                  disabled={product.stock === 0}
+                  disabled={product.availableQuantity === 0}
                   className="flex-grow bg-slate-900 text-white py-3 md:py-4 rounded-xl font-semibold text-sm hover:bg-slate-800 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Buy Now
@@ -242,7 +259,7 @@ const ProductDetailPage = () => {
               </div>
               <button
                 onClick={handleAddToCart}
-                disabled={product.stock === 0}
+                disabled={product.availableQuantity === 0}
                 className={`w-full border py-3 md:py-4 rounded-xl font-semibold text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                   addedToCart
                     ? 'bg-green-50 border-green-200 text-green-700'

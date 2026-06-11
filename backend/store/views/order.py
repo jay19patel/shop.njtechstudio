@@ -4,7 +4,7 @@ import logging
 from rest_framework import permissions, status, viewsets
 from rest_framework.response import Response
 
-from ..models import Order, OrderItem, Payment, ProductVariant
+from ..models import Order, OrderItem, Payment, Product
 from ..serializers import OrderSerializer
 
 logger = logging.getLogger(__name__)
@@ -52,13 +52,13 @@ class OrderViewSet(viewsets.ModelViewSet):
         # Create order items
         for item in data.get('items', []):
             try:
-                variant = ProductVariant.objects.filter(
-                    product_id=item.get('product_id')
+                product_obj = Product.objects.filter(
+                    id=item.get('product_id')
                 ).first()
-                if variant:
+                if product_obj:
                     OrderItem.objects.create(
                         order    = order,
-                        variant  = variant,
+                        product  = product_obj,
                         quantity = item.get('quantity', 1),
                         price    = item.get('price', 0),
                     )

@@ -5,11 +5,11 @@ import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/navigation';
-import { User, Lock, Save, AlertCircle, CheckCircle2, MapPin, Phone, Plus, Star, LayoutDashboard } from 'lucide-react';
+import { User, Lock, Save, AlertCircle, CheckCircle2, MapPin, Phone, Plus, Star } from 'lucide-react';
 import { getAddresses, addAddress, setDefaultAddress, getContacts, addContact, setDefaultContact } from '../../lib/api';
 
 export default function ProfilePage() {
-  const { user, isAuthenticated, updateUserProfile } = useAuth();
+  const { user, isAuthenticated, loading: authLoading, updateUserProfile } = useAuth();
   const router = useRouter();
 
   const [activeTab, setActiveTab] = useState('profile'); // profile, addresses, contacts
@@ -44,16 +44,21 @@ export default function ProfilePage() {
   }, [user]);
 
   useEffect(() => {
+    // Only redirect when auth check is fully complete (not still loading)
+    if (!authLoading && !isAuthenticated) {
+      router.push('/login');
+    }
+  }, [authLoading, isAuthenticated, router]);
+
+  useEffect(() => {
     if (isAuthenticated) {
       fetchAddresses();
       fetchContacts();
     }
   }, [isAuthenticated]);
 
-  if (!isAuthenticated) {
-    if (typeof window !== 'undefined') router.push('/login');
-    return null;
-  }
+  // Show nothing while auth is still being determined
+  if (authLoading || !isAuthenticated) return null;
 
   // --- Profile Logic ---
   const handleProfileChange = (e) => {
@@ -169,12 +174,7 @@ export default function ProfilePage() {
             <Phone className="w-5 h-5" />
             <span className="font-bold text-sm uppercase tracking-wider">Contacts</span>
           </button>
-          {user?.is_superuser && (
-            <button onClick={() => router.push('/admin/dashboard')} className="mt-4 p-4 rounded-2xl flex items-center gap-3 transition-all bg-indigo-50 hover:bg-indigo-100 text-indigo-600 border-2 border-indigo-100">
-              <LayoutDashboard className="w-5 h-5" />
-              <span className="font-bold text-sm uppercase tracking-wider">Admin Dashboard</span>
-            </button>
-          )}
+
         </div>
 
         {/* Content Area */}

@@ -223,9 +223,22 @@ const ShopPage = () => {
                         <h3 className="text-base font-extrabold tracking-tight uppercase text-blue-950 leading-tight group-hover:text-slate-900 transition-colors truncate pr-2">
                           <Link href={`/shop/${product.id}`}>{product.name}</Link>
                         </h3>
-                        <span className="text-base font-black text-slate-600 font-sans whitespace-nowrap">
-                          {product.priceDisplay}
-                        </span>
+                        <div className="flex flex-col items-end whitespace-nowrap">
+                          {product.hasDiscount ? (
+                            <>
+                              <span className="text-base font-black text-slate-900 font-sans">
+                                {product.discountedPriceDisplay}
+                              </span>
+                              <span className="text-[10px] font-bold text-slate-400 line-through">
+                                {product.priceDisplay}
+                              </span>
+                            </>
+                          ) : (
+                            <span className="text-base font-black text-slate-600 font-sans">
+                              {product.priceDisplay}
+                            </span>
+                          )}
+                        </div>
                       </div>
 
                       <div className="flex items-center justify-between mt-2 pt-3 border-t border-slate-100">
@@ -233,7 +246,7 @@ const ShopPage = () => {
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                           </svg>
-                          {product.stock > 0 ? `${product.stock} left` : 'Out of stock'}
+                          {product.availableQuantity > 0 ? `${product.availableQuantity} left` : 'Out of stock'}
                         </span>
                         <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest">
                           {categories.find((c) => c.id === product.category_id)?.name?.split(' ')[0] ?? ''}

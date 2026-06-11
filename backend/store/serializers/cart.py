@@ -1,18 +1,17 @@
 from rest_framework import serializers
-from ..models import Cart, CartItem, ProductVariant
-from .product import ProductVariantSerializer, SimpleProductSerializer
+from ..models import Cart, CartItem, Product
+from .product import SimpleProductSerializer
 
 
 class CartItemSerializer(serializers.ModelSerializer):
-    variant    = ProductVariantSerializer(read_only=True)
-    variant_id = serializers.PrimaryKeyRelatedField(
-        queryset=ProductVariant.objects.all(), source='variant', write_only=True
+    product = SimpleProductSerializer(read_only=True)
+    product_id = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all(), source='product', write_only=True
     )
-    product = SimpleProductSerializer(source='variant.product', read_only=True)
 
     class Meta:
         model = CartItem
-        fields = ['id', 'variant', 'variant_id', 'product', 'quantity']
+        fields = ['id', 'product', 'product_id', 'quantity']
 
 
 class CartSerializer(serializers.ModelSerializer):

@@ -110,16 +110,9 @@ def generate_invoice_pdf(order) -> bytes:
         Paragraph("Unit price", label),
         Paragraph("Amount", label),
     ]]
-    for item in order.items.select_related("variant__product").all():
-        product_name = item.variant.product.name if item.variant else "Product"
-        variant_parts = []
-        if item.variant and item.variant.size:
-            variant_parts.append(item.variant.size)
-        if item.variant and item.variant.color:
-            variant_parts.append(item.variant.color)
+    for item in order.items.select_related("product").all():
+        product_name = item.product.name if item.product else "Product"
         detail = product_name
-        if variant_parts:
-            detail += "<br/><font color='#716b64' size='8'>" + " / ".join(variant_parts) + "</font>"
         amount = item.price * item.quantity
         item_rows.append([
             Paragraph(detail, body),

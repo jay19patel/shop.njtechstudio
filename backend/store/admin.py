@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (
-    Category, Product, ProductVariant, ProductImage, Cart, CartItem, 
+    Category, Product, ProductImage, Cart, CartItem, 
     Order, OrderItem, Address, Contact, Payment, Testimonial, ContactMessage,
     EmailLog, Coupon
 )
@@ -18,10 +18,6 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ['name', 'description']
     prepopulated_fields = {'slug': ('name',)}
 
-class ProductVariantInline(admin.TabularInline):
-    model = ProductVariant
-    extra = 1
-
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
     extra = 1
@@ -32,7 +28,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ['is_active', 'category']
     search_fields = ['name', 'description', 'slug']
     prepopulated_fields = {'slug': ('name',)}
-    inlines = [ProductImageInline, ProductVariantInline]
+    inlines = [ProductImageInline]
 
 class CartItemInline(admin.TabularInline):
     model = CartItem

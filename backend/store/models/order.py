@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from .product import ProductVariant
+from .product import Product
 
 
 class Order(models.Model):
@@ -83,7 +83,7 @@ class OrderItem(models.Model):
     """One product line inside an order. Price is snapshot at purchase time."""
 
     order   = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
-    variant = models.ForeignKey(ProductVariant, on_delete=models.SET_NULL, null=True)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
     quantity = models.PositiveIntegerField()
     price    = models.DecimalField(max_digits=10, decimal_places=2)  # locked at order time
 
@@ -92,5 +92,5 @@ class OrderItem(models.Model):
         return self.price * self.quantity
 
     def __str__(self) -> str:
-        name = self.variant.product.name if self.variant else "Deleted Product"
+        name = self.product.name if self.product else "Deleted Product"
         return f"{self.quantity} × {name}"

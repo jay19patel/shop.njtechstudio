@@ -6,12 +6,12 @@ from decimal import Decimal
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ecommerce.settings")
 django.setup()
 
-from store.models import Category, Product, ProductVariant, ProductImage, FAQ, Testimonial
+from store.models import Category, Product, ProductImage, FAQ, Testimonial
 
 def seed_data():
     print("Clearing existing catalog data...")
     ProductImage.objects.all().delete()
-    ProductVariant.objects.all().delete()
+
     Product.objects.all().delete()
     Category.objects.all().delete()
     FAQ.objects.all().delete()
@@ -58,9 +58,7 @@ def seed_data():
         image_url="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80",
         is_primary=True
     )
-    ProductVariant.objects.create(product=prod1, sku="TSH-WHT-S", size="S", color="White", stock=50)
-    ProductVariant.objects.create(product=prod1, sku="TSH-WHT-M", size="M", color="White", stock=100)
-    ProductVariant.objects.create(product=prod1, sku="TSH-WHT-L", size="L", color="White", stock=75)
+
 
     # --- Product 2 ---
     prod2 = Product.objects.create(
@@ -76,8 +74,7 @@ def seed_data():
         image_url="https://images.unsplash.com/photo-1503342394128-c104d54dba01?auto=format&fit=crop&w=800&q=80",
         is_primary=True
     )
-    ProductVariant.objects.create(product=prod2, sku="TSH-GRP-M", size="M", color="Black", stock=30)
-    ProductVariant.objects.create(product=prod2, sku="TSH-GRP-L", size="L", color="Black", stock=40)
+
 
     # --- Product 3 ---
     prod3 = Product.objects.create(
@@ -93,8 +90,7 @@ def seed_data():
         image_url="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80",
         is_primary=True
     )
-    ProductVariant.objects.create(product=prod3, sku="SHT-OXF-M", size="M", color="Light Blue", stock=20)
-    ProductVariant.objects.create(product=prod3, sku="SHT-OXF-L", size="L", color="Light Blue", stock=25)
+
 
     # --- Product 4 ---
     prod4 = Product.objects.create(
@@ -110,7 +106,7 @@ def seed_data():
         image_url="https://images.unsplash.com/photo-1589902860314-e910cb96d32f?auto=format&fit=crop&w=800&q=80",
         is_primary=True
     )
-    ProductVariant.objects.create(product=prod4, sku="SHT-FLN-L", size="L", color="Red/Black", stock=15)
+
 
     # --- Product 5 ---
     prod5 = Product.objects.create(
@@ -126,8 +122,7 @@ def seed_data():
         image_url="https://images.unsplash.com/photo-1576871337622-98d48d1cf531?auto=format&fit=crop&w=800&q=80",
         is_primary=True
     )
-    ProductVariant.objects.create(product=prod5, sku="JKT-DNM-M", size="M", color="Blue Wash", stock=10)
-    ProductVariant.objects.create(product=prod5, sku="JKT-DNM-L", size="L", color="Blue Wash", stock=12)
+
 
     # --- Product 6 ---
     prod6 = Product.objects.create(
@@ -143,7 +138,7 @@ def seed_data():
         image_url="https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=800&q=80",
         is_primary=True
     )
-    ProductVariant.objects.create(product=prod6, sku="JKT-LTH-M", size="M", color="Black", stock=8)
+
 
     print("Creating FAQs...")
     FAQ.objects.create(

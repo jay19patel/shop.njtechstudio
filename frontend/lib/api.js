@@ -265,9 +265,6 @@ export async function getProduct(id) {
       price_value: prod.price,
       price: `₹${prod.price}`,
       primary_image: prod.image,
-      variants: [
-        { id: 1, sku: `${prod.name.slice(0, 3).toUpperCase()}-VAR`, size: "Standard", color: "Default", stock: 10 }
-      ]
     };
   }
   throw new Error("Product not found locally");
@@ -588,14 +585,27 @@ export function normalizeProduct(p) {
 
   const mergedGallery = [...galleryFromAttachments, ...legacyGallery].filter(Boolean);
 
+
+  const priceValue = p.price_value ?? p.base_price ?? 0;
+  const discountPct = parseFloat(p.discount_percentage || "0");
+  const hasDiscount = discountPct > 0;
+  const discountedPrice = hasDiscount ? priceValue * (1 - discountPct / 100) : priceValue;
+
   return {
     ...p,
     id: productId,
     image: mainImage,
     images: mergedGallery.length ? mergedGallery : mainImage ? [mainImage] : [],
-    priceValue: p.price_value ?? 0,
-    priceDisplay: p.price || `₹${p.price_value ?? 0}`,
-    category: typeof p.category === 'object' && p.category !== null ? p.category.name : p.category,
+    priceValue: priceValue,
+    discountedPrice: discountedPrice,
+    hasDiscount: hasDiscount,
+    tag: p.tag || null,
+    discountPercentage: discountPct,
+    priceDisplay: `₹${Math.round(priceValue).toLocaleString('en-IN')}`,
+    discountedPriceDisplay: `₹${Math.round(discountedPrice).toLocaleString('en-IN')}`,
+    availableQuantity: p.available_quantity ?? 0,
+    category: typeof p.category === 'object' && p.category !== null ? p.category : { name: p.category },
+    category_id: typeof p.category === 'object' && p.category !== null ? p.category.id : (p.category_id ?? null),
   };
 }
 
@@ -617,8 +627,8 @@ export function normalizeOrder(o) {
     screenshot_url: resolveImageUrl(o.screenshot_id),
     items: (o.items || []).map((item) => ({
       ...item,
-      name: item.product?.name || item.variant?.product?.name || item.name || "Product",
-      image: resolveImageUrl(item.product?.primary_image || item.image || item.variant?.product?.primary_image),
+      name: item.product?.name || item.name || "Product",
+      image: resolveImageUrl(item.product?.primary_image || item.image),
     })),
   };
 }

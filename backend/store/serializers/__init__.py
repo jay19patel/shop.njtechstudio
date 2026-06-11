@@ -8,7 +8,6 @@ continues to work everywhere without changes.
 from .product import (
     CategorySerializer,
     ProductImageSerializer,
-    ProductVariantSerializer,
     SimpleProductSerializer,
     ProductSerializer,
 )
@@ -26,7 +25,6 @@ from .misc  import (
 __all__ = [
     "CategorySerializer",
     "ProductImageSerializer",
-    "ProductVariantSerializer",
     "SimpleProductSerializer",
     "ProductSerializer",
     "CartSerializer", "CartItemSerializer",

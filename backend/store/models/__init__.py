@@ -8,7 +8,7 @@ Re-exports all model classes so that:
 """
 
 from .category    import Category
-from .product     import Product, ProductVariant, ProductImage
+from .product     import Product, ProductImage
 from .cart        import Cart, CartItem
 from .order       import Order, OrderItem
 from .payment     import Payment
@@ -19,7 +19,7 @@ from .coupon      import Coupon
 
 __all__ = [
     "Category",
-    "Product", "ProductVariant", "ProductImage",
+    "Product", "ProductImage",
     "Cart", "CartItem",
     "Order", "OrderItem",
     "Payment",

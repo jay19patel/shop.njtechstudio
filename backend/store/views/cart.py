@@ -6,7 +6,7 @@ from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from ..models import Cart, CartItem, Order, OrderItem, ProductVariant
+from ..models import Cart, CartItem, Order, OrderItem, Product
 from ..serializers import CartSerializer, CartItemSerializer, OrderSerializer
 
 logger = logging.getLogger(__name__)
@@ -42,9 +42,9 @@ class CartViewSet(viewsets.ModelViewSet):
             product_id = item_data.get('product')
             quantity   = item_data.get('quantity', 1)
             try:
-                variant = ProductVariant.objects.filter(product_id=product_id).first()
-                if variant:
-                    CartItem.objects.create(cart=cart, variant=variant, quantity=quantity)
+                product_obj = Product.objects.filter(id=product_id).first()
+                if product_obj:
+                    CartItem.objects.create(cart=cart, product=product_obj, quantity=quantity)
             except ValueError:
                 logger.warning("cart_item_skipped_bad_product_id",
                                extra={"product_id": product_id})
@@ -55,17 +55,17 @@ class CartViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'])
     def add_item(self, request, pk=None):
-        """Increment (or create) a cart item by variant_id."""
+        """Increment (or create) a cart item by product_id."""
         cart       = self.get_object()
-        variant_id = request.data.get('variant_id')
+        product_id = request.data.get('product_id')
         quantity   = int(request.data.get('quantity', 1))
 
-        if not variant_id:
-            return Response({'error': 'variant_id is required'},
+        if not product_id:
+            return Response({'error': 'product_id is required'},
                             status=status.HTTP_400_BAD_REQUEST)
 
         item, created = CartItem.objects.get_or_create(
-            cart=cart, variant_id=variant_id,
+            cart=cart, product_id=product_id,
             defaults={'quantity': quantity}
         )
         if not created:
@@ -99,9 +99,9 @@ class CartViewSet(viewsets.ModelViewSet):
         OrderItem.objects.bulk_create([
             OrderItem(
                 order=order,
-                variant=item.variant,
+                product=item.product,
                 quantity=item.quantity,
-                price=item.variant.price_override or item.variant.product.base_price,
+                price=item.product.base_price,
             )
             for item in items
         ])

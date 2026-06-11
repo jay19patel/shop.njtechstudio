@@ -205,7 +205,7 @@ const OrderDetailPage = () => {
 
                   {/* 3. Processing */}
                   <div className={`flex items-start gap-6 relative z-10 py-4 ${order.processing_date ? 'opacity-100' : 'opacity-40 grayscale'} ${order.status === 'CANCELLED' ? 'opacity-50 grayscale' : ''}`}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${order.processing_date && order.status !== 'CANCELLED' ? 'bg-slate-1000 text-white shadow-lg shadow-orange-200' : 'bg-slate-100 text-slate-400'}`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${order.processing_date && order.status !== 'CANCELLED' ? 'bg-orange-500 text-white shadow-lg shadow-orange-200' : 'bg-slate-100 text-slate-400'}`}>
                       <Clock className="w-4 h-4" />
                     </div>
                     <div className="flex flex-col gap-1 pt-1">

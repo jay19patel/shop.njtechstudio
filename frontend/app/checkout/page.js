@@ -461,47 +461,39 @@ const CheckoutPage = () => {
                     </h2>
                   </div>
 
-                  <div className="flex flex-col gap-8 w-full items-center">
-                    {/* QR Code Section */}
-                    <div className="w-full flex flex-col items-center justify-center gap-6">
-                      <div className="w-56 h-56 bg-white rounded-3xl shadow-md border border-slate-100 overflow-hidden flex items-center justify-center p-4 relative group">
-                        <img
-                          src="/images/qr-dummy.png"
-                          alt="Payment QR Code"
-                          className="w-full h-full object-contain"
-                          onError={(e) => {
-                            e.target.style.display = 'none';
-                            e.target.nextSibling.style.display = 'flex';
-                          }}
-                        />
-                        <div className="hidden w-full h-full flex-col items-center justify-center gap-3 text-slate-300">
-                          <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
-                          </svg>
-                          <span className="text-xs font-bold uppercase tracking-widest">QR Code Missing</span>
+                  <div className="flex flex-col gap-6 w-full">
+                    <div className="grid grid-cols-1 gap-6">
+                      <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100 flex flex-col sm:flex-row items-center sm:items-start gap-6">
+                        <div className="w-32 h-32 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex-shrink-0 flex items-center justify-center p-2">
+                          <img
+                            src="/images/qr-dummy.png"
+                            alt="Payment QR Code"
+                            className="w-full h-full object-contain"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                              e.target.nextSibling.style.display = 'flex';
+                            }}
+                          />
+                          <div className="hidden w-full h-full flex-col items-center justify-center gap-2 text-slate-300">
+                            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                            </svg>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-center">No QR</span>
+                          </div>
+                        </div>
+                        <div className="flex flex-col gap-2 w-full text-center sm:text-left">
+                          <h3 className="text-sm font-black uppercase tracking-widest text-blue-950">
+                            Pay via UPI
+                          </h3>
+                          <p className="text-xs font-medium text-slate-500 leading-relaxed">
+                            Scan the QR code with any UPI app (GPay, PhonePe, Paytm, etc.) to securely pay the exact amount of <strong>₹{finalTotal.toLocaleString('en-IN')}</strong>.
+                          </p>
                         </div>
                       </div>
-                      <div className="flex flex-col items-center gap-2">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                          Accepts all UPI Apps
-                        </p>
-                        <div className="flex items-center gap-3 opacity-60 grayscale">
-                          <span className="text-xs font-bold text-slate-600">GPay</span>
-                          <span className="w-1 h-1 rounded-full bg-slate-300" />
-                          <span className="text-xs font-bold text-slate-600">PhonePe</span>
-                          <span className="w-1 h-1 rounded-full bg-slate-300" />
-                          <span className="text-xs font-bold text-slate-600">Paytm</span>
-                        </div>
-                      </div>
-                    </div>
 
-                    <div className="w-full h-px bg-slate-100" />
-
-                    {/* Input Section */}
-                    <div className="w-full flex flex-col justify-center gap-6">
-                      <div className="flex flex-col gap-2">
+                      <div className="flex flex-col gap-2 mt-2">
                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-1">
-                          Step 1: Enter UPI Transaction ID <span className="text-red-500">*</span>
+                          UPI Transaction ID <span className="text-red-500">*</span>
                         </label>
                         <input
                           required
@@ -516,7 +508,7 @@ const CheckoutPage = () => {
                       <div className="flex flex-col gap-2">
                         <div className="flex items-center justify-between px-1">
                           <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                            Step 2: Upload Screenshot
+                            Upload Payment Screenshot
                           </label>
                           <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Optional</span>
                         </div>
@@ -562,13 +554,6 @@ const CheckoutPage = () => {
                         </div>
                       </div>
                     </div>
-                  </div>
-
-                  <div className="bg-slate-100/50 p-5 rounded-2xl border border-orange-100 flex items-center gap-4">
-                    <ShieldCheck className="w-8 h-8 text-slate-900 flex-shrink-0" />
-                    <p className="text-xs font-bold text-orange-900 leading-relaxed">
-                      Your payment will be manually verified by our team. Please ensure you pay the exact amount of <span className="font-black text-orange-600 tracking-wider">₹{finalTotal.toLocaleString('en-IN')}</span> for faster processing.
-                    </p>
                   </div>
                 </div>
               </div>
