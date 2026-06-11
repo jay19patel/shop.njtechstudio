@@ -119,7 +119,6 @@ async function apiFetch(path, options = {}) {
 
     return res.json();
   } catch (err) {
-    console.error(`apiFetch failed for ${url}:`, err);
     throw err;
   }
 }
@@ -722,5 +721,24 @@ export async function deleteAdminMessage(id) {
   return await apiFetch(`/contact-messages/${id}/`, {
     method: 'DELETE',
     requireAuth: true,
+  });
+}
+
+// ==========================================
+// COUPON APIs
+// ==========================================
+
+export async function validateCoupon(code) {
+  return await apiFetch(`/coupons/validate`, {
+    method: 'POST',
+    body: JSON.stringify({ code }),
+    requireAuth: false,
+  });
+}
+
+export async function getActiveCoupon() {
+  return await apiFetch(`/coupons/active`, {
+    method: 'GET',
+    requireAuth: false,
   });
 }

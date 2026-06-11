@@ -7,6 +7,7 @@ from .views import (
     AdminDashboardStatsView, AdminOrderViewSet, AdminProductViewSet,
     ContactMessageViewSet, FAQViewSet
 )
+from .views.coupon import ValidateCouponView, ActiveCouponsView
 
 router = DefaultRouter()
 router.register(r'categories', CategoryViewSet, basename='category')
@@ -27,6 +28,8 @@ urlpatterns = [
     path('', include(router.urls)),
     path('upload-screenshot', UploadScreenshotView.as_view(), name='upload_screenshot'),
     path('admin/stats', AdminDashboardStatsView.as_view(), name='admin_stats'),
+    path('coupons/validate', ValidateCouponView.as_view(), name='validate_coupon'),
+    path('coupons/active', ActiveCouponsView.as_view(), name='active_coupons'),
     # Auth endpoints mapped exactly as frontend expects them (/api/auth/login)
     path('auth/register', RegisterView.as_view(), name='register'),
     path('auth/login', LoginView.as_view(), name='login'),

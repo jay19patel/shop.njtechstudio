@@ -134,28 +134,27 @@ function LoginPageContent() {
               </button>
             </form>
 
-              <div className="flex flex-col gap-5 items-center mt-4">
-                <div className="w-full flex items-center gap-4">
-                  <div className="h-px bg-slate-100 flex-grow" />
-                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">or</span>
-                  <div className="h-px bg-slate-100 flex-grow" />
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => handleGoogleLogin()}
-                  disabled={loading}
-                  className="w-full bg-white border border-slate-200 text-slate-700 rounded-xl py-3 font-semibold text-sm hover:bg-slate-50 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
-                >
-                  <img src="https://www.google.com/favicon.ico" className="w-4 h-4" alt="Google" />
-                  <span>{loading ? 'Processing...' : 'Continue with Google'}</span>
-                </button>
-
-                <p className="text-sm text-slate-500 mt-2">
-                  Don&apos;t have an account?{' '}
-                  <Link href="/register" className="text-slate-900 font-semibold hover:underline">Register here</Link>
-                </p>
+            <div className="flex flex-col gap-5 items-center mt-4">
+              <div className="w-full flex items-center gap-4">
+                <div className="h-px bg-slate-100 flex-grow" />
+                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">or</span>
+                <div className="h-px bg-slate-100 flex-grow" />
               </div>
+
+              <button
+                type="button"
+                onClick={() => handleGoogleLogin()}
+                disabled={loading}
+                className="w-full bg-white border border-slate-200 text-slate-700 rounded-xl py-3 font-semibold text-sm hover:bg-slate-50 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+              >
+                <img src="https://www.google.com/favicon.ico" className="w-4 h-4" alt="Google" />
+                <span>{loading ? 'Processing...' : 'Continue with Google'}</span>
+              </button>
+
+              <p className="text-sm text-slate-500 mt-2">
+                Don&apos;t have an account?{' '}
+                <Link href="/register" className="text-slate-900 font-semibold hover:underline">Register here</Link>
+              </p>
             </div>
           </div>
         </div>

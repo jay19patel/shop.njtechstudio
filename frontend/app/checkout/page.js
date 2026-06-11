@@ -16,7 +16,6 @@ const CheckoutPage = () => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
-  const [step, setStep] = useState('shipping'); // 'shipping' | 'payment'
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -32,6 +31,15 @@ const CheckoutPage = () => {
   const [screenshotFile, setScreenshotFile] = useState(null);
   const [screenshotPreview, setScreenshotPreview] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+
+  // Coupon state
+  const [couponCode, setCouponCode] = useState('');
+  const [couponDiscount, setCouponDiscount] = useState(0); // percentage
+  const [appliedCouponCode, setAppliedCouponCode] = useState(null);
+  const [couponError, setCouponError] = useState(null);
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+
+  const finalTotal = cartTotal * (1 - couponDiscount / 100);
 
   // Authentication guard
   React.useEffect(() => {
@@ -106,10 +114,29 @@ const CheckoutPage = () => {
     setScreenshotPreview(null);
   };
 
-  const handleProceedToPayment = (e) => {
-    e.preventDefault();
-    setStep('payment');
-    window.scrollTo(0, 0);
+
+
+  const applyCoupon = async () => {
+    setCouponError(null);
+    if (!couponCode) return;
+    setIsApplyingCoupon(true);
+    try {
+      const { validateCoupon } = await import('../../lib/api');
+      const data = await validateCoupon(couponCode);
+      setAppliedCouponCode(data.code);
+      setCouponDiscount(data.discount_percentage);
+      setCouponCode('');
+    } catch (err) {
+      setCouponError(err.message || 'Invalid or expired coupon code.');
+    } finally {
+      setIsApplyingCoupon(false);
+    }
+  };
+
+  const removeCoupon = () => {
+    setAppliedCouponCode(null);
+    setCouponDiscount(0);
+    setCouponError(null);
   };
 
   const handleSubmit = async (e) => {
@@ -152,6 +179,8 @@ const CheckoutPage = () => {
         }
       }
 
+      let notesStr = appliedCouponCode ? `Applied Coupon: ${appliedCouponCode} (${couponDiscount}% off)` : null;
+
       const payload = {
         customer_name: formData.fullName,
         customer_email: formData.email,
@@ -161,12 +190,12 @@ const CheckoutPage = () => {
         state: formData.state,
         pincode: formData.pincode,
         items: orderItems,
-        total_amount: cartTotal,
+        total_amount: finalTotal,
         upi_transaction_id: paymentData.upiTransactionId || null,
         screenshot_id: screenshotId,
         // ? Backend ``PaymentStatus``: pending | received | verified | failed
         payment_status: paymentData.upiTransactionId?.trim() ? 'received' : 'pending',
-        notes: null,
+        notes: notesStr,
         status: 'pending',
         cart_id: cartId || null,
       };
@@ -218,42 +247,115 @@ const CheckoutPage = () => {
 
       <main className="flex-grow w-full max-w-7xl mx-auto px-4 py-12 md:py-20">
         <div className="flex flex-col gap-8">
-          <button
-            onClick={() => step === 'payment' ? setStep('shipping') : router.push('/shop')}
-            className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 w-fit transition-colors"
-          >
-            <ChevronLeft className="w-4 h-4" />
-            {step === 'payment' ? 'Back to Shipping' : 'Back to Shop'}
-          </button>
-
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight uppercase text-blue-950">
-            {step === 'shipping' ? 'Checkout.' : 'Payment.'}
+            Checkout.
           </h1>
 
-          {/* Step indicator */}
-          <div className="flex items-center gap-3">
-            <div className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest ${step === 'shipping' ? 'text-slate-900' : 'text-green-500'}`}>
-              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-black ${step === 'shipping' ? 'bg-slate-900' : 'bg-green-500'}`}>
-                {step === 'shipping' ? '1' : '✓'}
-              </div>
-              Shipping
-            </div>
-            <div className="w-8 h-px bg-slate-100" />
-            <div className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest ${step === 'payment' ? 'text-slate-900' : 'text-slate-300'}`}>
-              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-black ${step === 'payment' ? 'bg-slate-900' : 'bg-slate-100'}`}>
-                2
-              </div>
-              Payment
-            </div>
-          </div>
+          <div className="flex flex-col gap-12 mt-4">
+            {/* Order Summary */}
+            <div className="w-full">
+              <div className="bg-white rounded-[32px] p-8 border border-slate-100 shadow-sm">
+                <h3 className="text-sm font-black uppercase tracking-[0.2em] text-blue-950 mb-8 pb-4 border-b border-slate-50">
+                  Order Summary
+                </h3>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start mt-4">
-            {/* Form Column */}
-            <div className="lg:col-span-8 flex flex-col gap-8">
-              {/* ── Shipping Step ── */}
-              {step === 'shipping' ? (
-                <form onSubmit={handleProceedToPayment} className="flex flex-col gap-8">
-                  <div className="bg-white rounded-[32px] p-8 md:p-10 border border-slate-100 shadow-sm flex flex-col gap-8">
+                <div className="flex flex-col lg:flex-row gap-6 mb-8">
+                  {/* Items List */}
+                  <div className="flex-1 flex flex-col gap-6 max-h-[300px] overflow-y-auto pr-2">
+                    {cart.map((item) => (
+                      <div key={item.id} className="flex gap-4">
+                        <div className="w-16 h-16 rounded-xl bg-white border border-slate-100 overflow-hidden flex-shrink-0">
+                          {item.image ? (
+                            <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full bg-slate-50 flex items-center justify-center">
+                              <svg className="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex flex-col justify-center gap-1">
+                          <p className="text-xs font-black uppercase text-blue-950 line-clamp-1">{item.name}</p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                            {item.quantity} × ₹{(item.priceValue ?? item.price ?? 0).toLocaleString('en-IN')}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Totals & Coupons */}
+                  <div className="flex-1 flex flex-col gap-4 pt-6 lg:pt-0 lg:pl-6 lg:border-l border-t lg:border-t-0 border-slate-50">
+                    <div className="flex flex-col gap-3 py-4 border-b border-slate-50 mb-2">
+                      {appliedCouponCode ? (
+                        <div className="bg-green-50 border border-green-100 rounded-xl p-4 flex items-center justify-between">
+                          <div className="flex flex-col">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-green-700">Coupon Applied</span>
+                            <span className="text-sm font-black text-green-800">{appliedCouponCode}</span>
+                          </div>
+                          <button type="button" onClick={removeCoupon} className="text-[10px] font-bold text-red-500 hover:text-red-700 uppercase tracking-widest">Remove</button>
+                        </div>
+                      ) : (
+                        <>
+                          <div className="flex gap-2">
+                            <input 
+                              type="text" 
+                              value={couponCode} 
+                              onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                              placeholder="COUPON CODE" 
+                              className="flex-grow bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-xs font-bold uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-slate-900/20"
+                            />
+                            <button 
+                              type="button"
+                              onClick={applyCoupon}
+                              disabled={!couponCode || isApplyingCoupon}
+                              className="bg-slate-900 text-white px-6 rounded-xl text-[10px] font-black uppercase tracking-widest disabled:opacity-50"
+                            >
+                              {isApplyingCoupon ? '...' : 'Apply'}
+                            </button>
+                          </div>
+                          {couponError && <span className="text-[10px] font-bold text-red-500 px-1">{couponError}</span>}
+                        </>
+                      )}
+                    </div>
+
+                    <div className="flex justify-between text-sm">
+                      <span className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Subtotal</span>
+                      <span className="font-bold text-blue-950">₹{cartTotal.toLocaleString('en-IN')}</span>
+                    </div>
+                    {appliedCouponCode && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-green-500 font-bold uppercase tracking-widest text-[10px]">Discount ({couponDiscount}%)</span>
+                        <span className="font-bold text-green-600">-₹{((cartTotal * couponDiscount) / 100).toLocaleString('en-IN')}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between text-sm">
+                      <span className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Shipping</span>
+                      <span className="font-bold text-green-500 uppercase tracking-widest text-[10px]">Free</span>
+                    </div>
+                    <div className="flex justify-between text-base pt-4 border-t border-slate-50 mt-2">
+                      <span className="text-blue-950 font-black uppercase tracking-tight">Total Amount</span>
+                      <span className="font-black text-slate-900">₹{finalTotal.toLocaleString('en-IN')}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-2 flex flex-col gap-4 bg-slate-100/50 p-6 rounded-2xl border border-orange-100">
+                  <div className="flex gap-3 items-center">
+                    <ShieldCheck className="w-5 h-5 text-slate-900" />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-orange-900 leading-tight">
+                      Secure Transaction Guaranteed
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <form onSubmit={handleSubmit} className="flex flex-col gap-8 w-full">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                {/* ── Shipping Step ── */}
+                <div className="bg-white rounded-[32px] p-8 md:p-10 border border-slate-100 shadow-sm flex flex-col gap-8 h-full">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center">
                         <MapPin className="w-6 h-6" />
@@ -346,223 +448,152 @@ const CheckoutPage = () => {
                         />
                       </div>
                     </div>
+                </div>
+
+                {/* ── Payment Step ── */}
+                <div className="bg-white rounded-[32px] p-8 md:p-10 border border-slate-100 shadow-sm flex flex-col gap-10 h-full">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center">
+                      <CreditCard className="w-6 h-6" />
+                    </div>
+                    <h2 className="text-xl font-black uppercase tracking-tight text-blue-950">
+                      Scan &amp; Pay
+                    </h2>
                   </div>
 
-                  <button
-                    type="submit"
-                    className="w-full bg-slate-900 text-white py-6 rounded-[24px] font-black uppercase tracking-[0.2em] text-sm shadow-2xl shadow-blue-200 hover:bg-slate-900/90 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3"
-                  >
-                    Proceed to Payment
-                  </button>
-                </form>
-              ) : (
-                /* ── Payment Step ── */
-                <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-                  <div className="bg-white rounded-[32px] p-8 md:p-10 border border-slate-100 shadow-sm flex flex-col gap-10">
-                    <div className="flex flex-col items-center gap-4 text-center">
-                      <div className="w-16 h-16 bg-blue-50 text-slate-900 rounded-full flex items-center justify-center mb-2">
-                        <CreditCard className="w-8 h-8" />
-                      </div>
-                      <h2 className="text-3xl font-extrabold tracking-tight uppercase text-blue-950">
-                        Scan &amp; Pay
-                      </h2>
-                      <p className="text-sm font-bold text-slate-500 uppercase tracking-widest max-w-sm">
-                        Please pay <span className="text-slate-900 font-black">₹{cartTotal.toLocaleString('en-IN')}</span> using any UPI app to confirm your order.
-                      </p>
-                    </div>
-
-                    <div className="flex flex-col md:flex-row gap-10 items-stretch bg-white p-6 md:p-8 rounded-[32px] border border-slate-100">
-                      {/* QR Code Section */}
-                      <div className="flex-1 flex flex-col items-center justify-center gap-6">
-                        <div className="w-56 h-56 bg-white rounded-3xl shadow-md border border-slate-100 overflow-hidden flex items-center justify-center p-4 relative group">
-                          <img
-                            src="/images/qr-dummy.png"
-                            alt="Payment QR Code"
-                            className="w-full h-full object-contain"
-                            onError={(e) => {
-                              e.target.style.display = 'none';
-                              e.target.nextSibling.style.display = 'flex';
-                            }}
-                          />
-                          <div className="hidden w-full h-full flex-col items-center justify-center gap-3 text-slate-300">
-                            <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
-                            </svg>
-                            <span className="text-xs font-bold uppercase tracking-widest">QR Code Missing</span>
-                          </div>
-                        </div>
-                        <div className="flex flex-col items-center gap-2">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                            Accepts all UPI Apps
-                          </p>
-                          <div className="flex items-center gap-3 opacity-60 grayscale">
-                            <span className="text-xs font-bold text-slate-600">GPay</span>
-                            <span className="w-1 h-1 rounded-full bg-slate-300" />
-                            <span className="text-xs font-bold text-slate-600">PhonePe</span>
-                            <span className="w-1 h-1 rounded-full bg-slate-300" />
-                            <span className="text-xs font-bold text-slate-600">Paytm</span>
-                          </div>
+                  <div className="flex flex-col gap-8 w-full items-center">
+                    {/* QR Code Section */}
+                    <div className="w-full flex flex-col items-center justify-center gap-6">
+                      <div className="w-56 h-56 bg-white rounded-3xl shadow-md border border-slate-100 overflow-hidden flex items-center justify-center p-4 relative group">
+                        <img
+                          src="/images/qr-dummy.png"
+                          alt="Payment QR Code"
+                          className="w-full h-full object-contain"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.nextSibling.style.display = 'flex';
+                          }}
+                        />
+                        <div className="hidden w-full h-full flex-col items-center justify-center gap-3 text-slate-300">
+                          <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                          </svg>
+                          <span className="text-xs font-bold uppercase tracking-widest">QR Code Missing</span>
                         </div>
                       </div>
-
-                      <div className="w-px bg-slate-100 hidden md:block" />
-                      <div className="h-px bg-slate-100 md:hidden w-full" />
-
-                      {/* Input Section */}
-                      <div className="flex-1 flex flex-col justify-center gap-6">
-                        <div className="flex flex-col gap-2">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-blue-950 px-1">
-                            Step 1: Enter UPI Transaction ID <span className="text-red-500">*</span>
-                          </label>
-                          <input
-                            required
-                            name="upiTransactionId"
-                            value={paymentData.upiTransactionId}
-                            onChange={handlePaymentChange}
-                            placeholder="e.g., 123456789012"
-                            className="w-full bg-white border border-slate-100 rounded-2xl px-5 py-4 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-slate-900/20 focus:border-blue-500 transition-all placeholder:font-normal placeholder:text-slate-400"
-                          />
-                        </div>
-
-                        <div className="flex flex-col gap-2">
-                          <div className="flex items-center justify-between px-1">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-blue-950">
-                              Step 2: Upload Screenshot
-                            </label>
-                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 px-2 py-0.5 rounded-full">Optional</span>
-                          </div>
-                          
-                          <div className="relative group cursor-pointer mt-1">
-                            <input
-                              type="file"
-                              accept="image/*"
-                              onChange={handleFileChange}
-                              disabled={isUploading}
-                              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                            />
-                            {screenshotPreview ? (
-                              <div className="w-full bg-white border border-blue-200 rounded-2xl p-3 flex items-center gap-4 shadow-sm shadow-blue-50">
-                                <div className="w-14 h-14 rounded-xl overflow-hidden border border-slate-100 flex-shrink-0">
-                                  <img src={screenshotPreview} alt="Preview" className="w-full h-full object-cover" />
-                                </div>
-                                <div className="flex-grow flex flex-col items-start gap-1 overflow-hidden">
-                                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-900">Screenshot Attached</span>
-                                  <span className="text-[10px] font-medium text-slate-500 truncate w-full">{screenshotFile?.name}</span>
-                                </div>
-                                <button
-                                  type="button"
-                                  onClick={(e) => { e.preventDefault(); clearScreenshot(); }}
-                                  className="p-2.5 bg-white hover:bg-red-50 text-slate-400 hover:text-red-500 rounded-xl transition-colors z-20"
-                                >
-                                  <X className="w-4 h-4" />
-                                </button>
-                              </div>
-                            ) : (
-                              <div className="w-full bg-white border border-dashed border-slate-200 rounded-2xl px-5 py-6 text-center transition-all group-hover:border-blue-400 group-hover:bg-blue-50 flex flex-col items-center gap-2">
-                                <ImageIcon className="w-6 h-6 text-slate-300 group-hover:text-blue-500 transition-colors" />
-                                <div className="flex flex-col">
-                                  <span className="text-xs font-black text-slate-500 group-hover:text-slate-900 uppercase tracking-widest transition-colors">
-                                    Select Image
-                                  </span>
-                                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">
-                                    For faster verification
-                                  </span>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="bg-slate-100/50 p-5 rounded-2xl border border-orange-100 flex items-center gap-4">
-                      <ShieldCheck className="w-8 h-8 text-slate-900 flex-shrink-0" />
-                      <p className="text-xs font-bold text-orange-900 leading-relaxed">
-                        Your payment will be manually verified by our team. Please ensure you pay the exact amount of <span className="font-black text-orange-600 tracking-wider">₹{cartTotal.toLocaleString('en-IN')}</span> for faster processing.
-                      </p>
-                    </div>
-                  </div>
-
-                  {submitError && (
-                    <div className="bg-red-50 border border-red-100 rounded-2xl p-4 text-center">
-                      <p className="text-red-500 text-sm font-bold">{submitError}</p>
-                    </div>
-                  )}
-
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full bg-slate-900 text-white py-6 rounded-[24px] font-black uppercase tracking-[0.2em] text-sm shadow-2xl shadow-blue-200 hover:bg-slate-900/90 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-3"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        Placing Order...
-                      </>
-                    ) : (
-                      'Confirm Payment & Place Order'
-                    )}
-                  </button>
-                </form>
-              )}
-            </div>
-
-            {/* Order Summary Column */}
-            <div className="lg:col-span-4 flex flex-col gap-6">
-              <div className="bg-white rounded-[32px] p-8 border border-slate-100 shadow-sm sticky top-32">
-                <h3 className="text-sm font-black uppercase tracking-[0.2em] text-blue-950 mb-8 pb-4 border-b border-slate-50">
-                  Order Summary
-                </h3>
-
-                <div className="flex flex-col gap-6 max-h-[300px] overflow-y-auto pr-2 mb-8">
-                  {cart.map((item) => (
-                    <div key={item.id} className="flex gap-4">
-                      <div className="w-16 h-16 rounded-xl bg-white border border-slate-100 overflow-hidden flex-shrink-0">
-                        {item.image ? (
-                          <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="w-full h-full bg-slate-50 flex items-center justify-center">
-                            <svg className="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex flex-col justify-center gap-1">
-                        <p className="text-xs font-black uppercase text-blue-950 line-clamp-1">{item.name}</p>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                          {item.quantity} × ₹{(item.priceValue ?? item.price ?? 0).toLocaleString('en-IN')}
+                      <div className="flex flex-col items-center gap-2">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                          Accepts all UPI Apps
                         </p>
+                        <div className="flex items-center gap-3 opacity-60 grayscale">
+                          <span className="text-xs font-bold text-slate-600">GPay</span>
+                          <span className="w-1 h-1 rounded-full bg-slate-300" />
+                          <span className="text-xs font-bold text-slate-600">PhonePe</span>
+                          <span className="w-1 h-1 rounded-full bg-slate-300" />
+                          <span className="text-xs font-bold text-slate-600">Paytm</span>
+                        </div>
                       </div>
                     </div>
-                  ))}
-                </div>
 
-                <div className="flex flex-col gap-4 pt-6 border-t border-slate-50">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Subtotal</span>
-                    <span className="font-bold text-blue-950">₹{cartTotal.toLocaleString('en-IN')}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Shipping</span>
-                    <span className="font-bold text-green-500 uppercase tracking-widest text-[10px]">Free</span>
-                  </div>
-                  <div className="flex justify-between text-base pt-4 border-t border-slate-50 mt-2">
-                    <span className="text-blue-950 font-black uppercase tracking-tight">Total Amount</span>
-                    <span className="font-black text-slate-900">₹{cartTotal.toLocaleString('en-IN')}</span>
-                  </div>
-                </div>
+                    <div className="w-full h-px bg-slate-100" />
 
-                <div className="mt-8 flex flex-col gap-4 bg-slate-100/50 p-6 rounded-2xl border border-orange-100">
-                  <div className="flex gap-3 items-center">
-                    <ShieldCheck className="w-5 h-5 text-slate-900" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-orange-900 leading-tight">
-                      Secure Transaction Guaranteed
-                    </span>
+                    {/* Input Section */}
+                    <div className="w-full flex flex-col justify-center gap-6">
+                      <div className="flex flex-col gap-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-1">
+                          Step 1: Enter UPI Transaction ID <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          required
+                          name="upiTransactionId"
+                          value={paymentData.upiTransactionId}
+                          onChange={handlePaymentChange}
+                          placeholder="e.g., 123456789012"
+                          className="w-full bg-white border border-slate-100 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/20 focus:border-blue-500 transition-all"
+                        />
+                      </div>
+
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center justify-between px-1">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                            Step 2: Upload Screenshot
+                          </label>
+                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Optional</span>
+                        </div>
+                        
+                        <div className="relative group cursor-pointer mt-1">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                            disabled={isUploading}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                          />
+                          {screenshotPreview ? (
+                            <div className="w-full bg-white border border-blue-200 rounded-2xl p-3 flex items-center gap-4 shadow-sm shadow-blue-50">
+                              <div className="w-14 h-14 rounded-xl overflow-hidden border border-slate-100 flex-shrink-0">
+                                <img src={screenshotPreview} alt="Preview" className="w-full h-full object-cover" />
+                              </div>
+                              <div className="flex-grow flex flex-col items-start gap-1 overflow-hidden">
+                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-900">Screenshot Attached</span>
+                                <span className="text-[10px] font-medium text-slate-500 truncate w-full">{screenshotFile?.name}</span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={(e) => { e.preventDefault(); clearScreenshot(); }}
+                                className="p-2.5 bg-white hover:bg-red-50 text-slate-400 hover:text-red-500 rounded-xl transition-colors z-20"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="w-full bg-white border border-dashed border-slate-200 rounded-2xl px-5 py-6 text-center transition-all group-hover:border-blue-400 group-hover:bg-blue-50 flex flex-col items-center gap-2">
+                              <ImageIcon className="w-6 h-6 text-slate-300 group-hover:text-blue-500 transition-colors" />
+                              <div className="flex flex-col">
+                                <span className="text-xs font-black text-slate-500 group-hover:text-slate-900 uppercase tracking-widest transition-colors">
+                                  Select Image
+                                </span>
+                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+                                  For faster verification
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-100/50 p-5 rounded-2xl border border-orange-100 flex items-center gap-4">
+                    <ShieldCheck className="w-8 h-8 text-slate-900 flex-shrink-0" />
+                    <p className="text-xs font-bold text-orange-900 leading-relaxed">
+                      Your payment will be manually verified by our team. Please ensure you pay the exact amount of <span className="font-black text-orange-600 tracking-wider">₹{finalTotal.toLocaleString('en-IN')}</span> for faster processing.
+                    </p>
                   </div>
                 </div>
               </div>
-            </div>
+
+              {submitError && (
+                <div className="bg-red-50 border border-red-100 rounded-2xl p-4 text-center">
+                  <p className="text-red-500 text-sm font-bold">{submitError}</p>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full bg-slate-900 text-white py-6 rounded-[24px] font-black uppercase tracking-[0.2em] text-sm shadow-2xl shadow-blue-200 hover:bg-slate-900/90 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-3"
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Placing Order...
+                  </>
+                ) : (
+                  'Confirm Payment & Place Order'
+                )}
+              </button>
+            </form>
           </div>
         </div>
       </main>

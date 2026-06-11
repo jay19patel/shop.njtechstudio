@@ -21,6 +21,7 @@ const SkeletonCard = () => (
 const ShopPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [aiEnabled, setAiEnabled] = useState(false);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -48,7 +49,11 @@ const ShopPage = () => {
     try {
       const params = { page: isLoadMore ? page + 1 : 1, page_size: 16 };
       if (selectedCategory !== 'all') params.category_id = selectedCategory;
-      if (searchQuery.trim()) params.search = searchQuery.trim();
+      if (searchQuery.trim()) {
+        params.search = searchQuery.trim();
+        // In the future, send `ai_search: aiEnabled` parameter to backend
+        if (aiEnabled) params.ai_search = true;
+      }
       
       const data = await getProducts(params);
       const newProducts = (data?.results ?? []).map(normalizeProduct);
@@ -68,7 +73,7 @@ const ShopPage = () => {
       setLoading(false);
       setLoadingMore(false);
     }
-  }, [selectedCategory, page]);
+  }, [selectedCategory, page, aiEnabled]);
 
   // Initial load and category switch
   useEffect(() => {
@@ -84,27 +89,42 @@ const ShopPage = () => {
         <div className="flex flex-col items-center gap-6 mb-12 px-4">
           
           {/* Search Bar */}
-          <div className="relative w-full max-w-md">
-            <input
-              type="text"
-              placeholder="Search products..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  fetchProducts(false);
-                }
-              }}
-              className="w-full pl-12 pr-4 py-3 rounded-full border border-slate-200 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all shadow-sm"
-            />
-            <svg 
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
+          <div className="flex flex-col w-full max-w-xl">
+            <div className="relative w-full">
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    fetchProducts(false);
+                  }
+                }}
+                className="w-full pl-12 pr-[100px] md:pr-[120px] py-3 md:py-4 rounded-full border border-slate-200 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all shadow-sm text-sm md:text-base"
+              />
+              <svg 
+                className="absolute left-4 md:left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+
+              {/* AI Toggle inside search bar */}
+              <button
+                type="button"
+                onClick={() => setAiEnabled(!aiEnabled)}
+                className={`absolute right-4 top-1/2 -translate-y-1/2 text-xs md:text-sm font-semibold transition-all flex items-center gap-1.5 ${
+                  aiEnabled 
+                    ? 'text-indigo-600' 
+                    : 'text-slate-400 hover:text-slate-600'
+                }`}
+              >
+                AI Search
+              </button>
+            </div>
           </div>
 
           {/* Category Filters */}

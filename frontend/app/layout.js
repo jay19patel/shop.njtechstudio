@@ -19,6 +19,7 @@ export const metadata = {
 };
 
 import { AuthProvider } from "../context/AuthContext";
+import MarqueeBanner from "../components/MarqueeBanner";
 
 export default function RootLayout({ children }) {
   return (
@@ -30,6 +31,7 @@ export default function RootLayout({ children }) {
         <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "your_google_client_id_here.apps.googleusercontent.com"}>
           <AuthProvider>
             <CartProvider>
+              <MarqueeBanner />
               {children}
             </CartProvider>
           </AuthProvider>

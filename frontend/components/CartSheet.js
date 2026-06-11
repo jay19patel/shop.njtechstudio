@@ -91,7 +91,7 @@ const CartSheet = () => {
                                                     <h3 className="text-[11px] md:text-[13px] font-extrabold tracking-tight uppercase text-blue-950 leading-tight">
                                                         {item.name}
                                                     </h3>
-                                                    <span className="text-xs md:text-sm font-black text-blue-600">₹{item.price}</span>
+                                                    <span className="text-xs md:text-sm font-black text-blue-600">₹{(item.priceValue ?? item.price ?? 0).toLocaleString('en-IN')}</span>
                                                 </div>
 
                                                 <div className="flex items-center justify-between mt-2">
@@ -132,7 +132,7 @@ const CartSheet = () => {
                             <div className="p-6 md:p-8 border-t border-slate-100 bg-white shadow-[0_-10px_30px_rgba(0,0,0,0.03)] flex flex-col gap-6 z-10">
                                 <div className="flex justify-between items-center text-base md:text-lg">
                                     <span className="text-slate-500 font-bold uppercase tracking-widest text-[10px] md:text-xs">Total Amount</span>
-                                    <span className="font-black text-blue-950">₹{cartTotal}</span>
+                                    <span className="font-black text-blue-950">₹{(cartTotal || 0).toLocaleString('en-IN')}</span>
                                 </div>
                                 <div className="flex flex-col gap-3">
                                     <button 

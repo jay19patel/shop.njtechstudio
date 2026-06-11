@@ -15,7 +15,7 @@ const Categories = () => {
   }, []);
 
   return (
-    <section id="categories" className="w-full flex flex-col gap-10 py-8">
+    <section id="categories" className="w-full max-w-5xl mx-auto flex flex-col gap-10 py-8">
       <div className="flex flex-col gap-2 mb-2 text-center md:text-left">
         <span className="text-slate-500 font-semibold text-xs uppercase tracking-wider">Browse Collections</span>
         <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900">

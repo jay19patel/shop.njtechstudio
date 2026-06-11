@@ -224,21 +224,21 @@ export default function ProfilePage() {
             <div className="flex flex-col gap-6">
               <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-extrabold tracking-tight uppercase text-blue-950">Saved Addresses</h2>
-                <button onClick={() => setShowAddAddress(!showAddAddress)} className="bg-slate-1000 text-white p-2 rounded-full hover:bg-orange-600 transition-all">
+                <button onClick={() => setShowAddAddress(!showAddAddress)} className="bg-slate-900 text-white p-2 rounded-full hover:bg-orange-600 transition-all">
                   <Plus className="w-5 h-5" />
                 </button>
               </div>
 
               {showAddAddress && (
-                <form onSubmit={handleAddressSubmit} className="bg-white p-6 rounded-3xl flex flex-col gap-4">
-                  <input placeholder="Full Name" required value={addressForm.full_name} onChange={(e) => setAddressForm({...addressForm, full_name: e.target.value})} className="w-full bg-white rounded-xl py-3 px-4 text-sm" />
-                  <textarea placeholder="Address Line" required value={addressForm.address_line} onChange={(e) => setAddressForm({...addressForm, address_line: e.target.value})} className="w-full bg-white rounded-xl py-3 px-4 text-sm" rows={2} />
+                <form onSubmit={handleAddressSubmit} className="bg-white border border-slate-100 shadow-sm p-6 rounded-3xl flex flex-col gap-4">
+                  <input placeholder="Full Name" required value={addressForm.full_name} onChange={(e) => setAddressForm({...addressForm, full_name: e.target.value})} className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/20" />
+                  <textarea placeholder="Address Line" required value={addressForm.address_line} onChange={(e) => setAddressForm({...addressForm, address_line: e.target.value})} className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/20" rows={2} />
                   <div className="grid grid-cols-2 gap-4">
-                    <input placeholder="City" required value={addressForm.city} onChange={(e) => setAddressForm({...addressForm, city: e.target.value})} className="w-full bg-white rounded-xl py-3 px-4 text-sm" />
-                    <input placeholder="State" required value={addressForm.state} onChange={(e) => setAddressForm({...addressForm, state: e.target.value})} className="w-full bg-white rounded-xl py-3 px-4 text-sm" />
+                    <input placeholder="City" required value={addressForm.city} onChange={(e) => setAddressForm({...addressForm, city: e.target.value})} className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/20" />
+                    <input placeholder="State" required value={addressForm.state} onChange={(e) => setAddressForm({...addressForm, state: e.target.value})} className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/20" />
                   </div>
-                  <input placeholder="Pincode" required value={addressForm.pincode} onChange={(e) => setAddressForm({...addressForm, pincode: e.target.value})} className="w-full bg-white rounded-xl py-3 px-4 text-sm" />
-                  <label className="flex items-center gap-2 text-sm text-slate-600">
+                  <input placeholder="Pincode" required value={addressForm.pincode} onChange={(e) => setAddressForm({...addressForm, pincode: e.target.value})} className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/20" />
+                  <label className="flex items-center gap-2 text-sm text-slate-600 font-bold uppercase tracking-widest mt-2 cursor-pointer">
                     <input type="checkbox" checked={addressForm.is_default} onChange={(e) => setAddressForm({...addressForm, is_default: e.target.checked})} className="w-4 h-4 rounded text-slate-900" />
                     Set as default address
                   </label>
@@ -253,7 +253,7 @@ export default function ProfilePage() {
                     <div className="flex justify-between items-start mb-2">
                       <span className="font-bold text-blue-950">{addr.full_name}</span>
                       {addr.is_default ? (
-                        <span className="bg-slate-1000 text-white text-[9px] font-bold px-2 py-1 rounded-full uppercase">Default</span>
+                        <span className="bg-slate-900 text-white text-[9px] font-bold px-2 py-1 rounded-full uppercase">Default</span>
                       ) : (
                         <button onClick={() => handleSetDefaultAddress(addr.id)} className="text-[10px] font-bold text-slate-400 hover:text-slate-900 uppercase">Set Default</button>
                       )}
@@ -271,15 +271,15 @@ export default function ProfilePage() {
             <div className="flex flex-col gap-6">
               <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-extrabold tracking-tight uppercase text-blue-950">Saved Contacts</h2>
-                <button onClick={() => setShowAddContact(!showAddContact)} className="bg-slate-1000 text-white p-2 rounded-full hover:bg-orange-600 transition-all">
+                <button onClick={() => setShowAddContact(!showAddContact)} className="bg-slate-900 text-white p-2 rounded-full hover:bg-orange-600 transition-all">
                   <Plus className="w-5 h-5" />
                 </button>
               </div>
 
               {showAddContact && (
-                <form onSubmit={handleContactSubmit} className="bg-white p-6 rounded-3xl flex flex-col gap-4">
-                  <input placeholder="Phone Number" required value={contactForm.phone_number} onChange={(e) => setContactForm({...contactForm, phone_number: e.target.value})} className="w-full bg-white rounded-xl py-3 px-4 text-sm" />
-                  <label className="flex items-center gap-2 text-sm text-slate-600">
+                <form onSubmit={handleContactSubmit} className="bg-white border border-slate-100 shadow-sm p-6 rounded-3xl flex flex-col gap-4">
+                  <input placeholder="Phone Number" required value={contactForm.phone_number} onChange={(e) => setContactForm({...contactForm, phone_number: e.target.value})} className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/20" />
+                  <label className="flex items-center gap-2 text-sm text-slate-600 font-bold uppercase tracking-widest mt-2 cursor-pointer">
                     <input type="checkbox" checked={contactForm.is_default} onChange={(e) => setContactForm({...contactForm, is_default: e.target.checked})} className="w-4 h-4 rounded text-slate-900" />
                     Set as default contact
                   </label>
@@ -293,7 +293,7 @@ export default function ProfilePage() {
                   <div key={contact.id} className={`p-5 rounded-2xl border-2 flex justify-between items-center ${contact.is_default ? 'border-slate-200 bg-slate-100' : 'border-slate-100 bg-white'}`}>
                     <span className="font-bold text-blue-950">{contact.phone_number}</span>
                     {contact.is_default ? (
-                      <span className="bg-slate-1000 text-white text-[9px] font-bold px-2 py-1 rounded-full uppercase">Default</span>
+                      <span className="bg-slate-900 text-white text-[9px] font-bold px-2 py-1 rounded-full uppercase">Default</span>
                     ) : (
                       <button onClick={() => handleSetDefaultContact(contact.id)} className="text-[10px] font-bold text-slate-400 hover:text-slate-900 uppercase">Set Default</button>
                     )}

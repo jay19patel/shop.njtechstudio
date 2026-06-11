@@ -32,7 +32,7 @@ export default function ContactPage() {
                     </div>
 
                     {/* Right: Requirements */}
-                    <div className="flex flex-col gap-10 order-1 lg:order-2 bg-slate-50 p-8 md:p-10 rounded-2xl border border-slate-100">
+                    <div className="flex flex-col gap-10 order-1 lg:order-2 bg-white p-8 md:p-10 rounded-2xl border border-slate-100 shadow-sm">
                         <div className="flex flex-col gap-3">
                             <h3 className="text-xl font-semibold tracking-tight text-slate-900">
                                 Custom Order Requirements

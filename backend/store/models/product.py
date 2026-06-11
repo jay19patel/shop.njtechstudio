@@ -10,6 +10,8 @@ class Product(models.Model):
     slug = models.SlugField(unique=True)
     description = models.TextField()
     base_price = models.DecimalField(max_digits=10, decimal_places=2)
+    available_quantity = models.PositiveIntegerField(default=0)
+    discount_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -2,8 +2,14 @@ from django.contrib import admin
 from .models import (
     Category, Product, ProductVariant, ProductImage, Cart, CartItem, 
     Order, OrderItem, Address, Contact, Payment, Testimonial, ContactMessage,
-    EmailLog
+    EmailLog, Coupon
 )
+
+@admin.register(Coupon)
+class CouponAdmin(admin.ModelAdmin):
+    list_display = ['code', 'discount_percentage', 'is_active', 'created_at']
+    list_filter = ['is_active', 'created_at']
+    search_fields = ['code']
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -116,7 +122,7 @@ def custom_get_app_list(self, request, app_label=None):
     groups = {
         'Customer Management': ['Users', 'Addresses', 'Contacts'],
         'Catalog': ['Categories', 'Products'],
-        'Sales & Orders': ['Carts', 'Orders', 'Payments'],
+        'Sales & Orders': ['Carts', 'Orders', 'Payments', 'Coupons'],
         'Support & Feedback': ['Contact messages', 'Testimonials'],
         'Email Delivery': ['Email logs'],
     }
