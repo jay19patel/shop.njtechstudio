@@ -16,6 +16,7 @@ from .user_profile import Address, Contact
 from .content     import Testimonial, ContactMessage, FAQ
 from .email_log   import EmailLog
 from .coupon      import Coupon
+from .like        import Like
 
 __all__ = [
     "Category",
@@ -28,4 +29,5 @@ __all__ = [
     "Testimonial", "FAQ",
     "ContactMessage",
     "EmailLog",
+    "Like",
 ]

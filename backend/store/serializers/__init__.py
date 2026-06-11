@@ -21,6 +21,11 @@ from .misc  import (
     ContactMessageSerializer,
     FAQSerializer,
 )
+from .like import (
+    LikeSerializer,
+    ProductLikeSerializer,
+    UserLikesSerializer,
+)
 
 __all__ = [
     "CategorySerializer",
@@ -35,4 +40,7 @@ __all__ = [
     "ContactSerializer",
     "ContactMessageSerializer",
     "FAQSerializer",
+    "LikeSerializer",
+    "ProductLikeSerializer",
+    "UserLikesSerializer",
 ]

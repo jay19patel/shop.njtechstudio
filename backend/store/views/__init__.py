@@ -11,6 +11,7 @@ from .order    import OrderViewSet, AdminOrderViewSet
 from .payment  import PaymentViewSet, UploadScreenshotView
 from .customer import AddressViewSet, ContactViewSet, TestimonialViewSet, FAQViewSet
 from .admin    import AdminDashboardStatsView, ContactMessageViewSet
+from .likes    import LikeViewSet
 
 __all__ = [
     "RegisterView", "LoginView", "LogoutView", "MeView", "GoogleLogin",
@@ -20,4 +21,5 @@ __all__ = [
     "PaymentViewSet", "UploadScreenshotView",
     "AddressViewSet", "ContactViewSet", "TestimonialViewSet", "FAQViewSet",
     "AdminDashboardStatsView", "ContactMessageViewSet",
+    "LikeViewSet",
 ]
