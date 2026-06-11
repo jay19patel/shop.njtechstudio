@@ -7,7 +7,7 @@ const Features = () => {
             <div className="md:col-span-2 rounded-3xl bg-blue-50 border border-blue-100 p-8 flex flex-col justify-between group hover:shadow-xl hover:shadow-blue-100 transition-all duration-300 relative overflow-hidden">
                 <div className="z-10 relative">
                     <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-xs font-bold uppercase tracking-widest rounded-lg mb-4">100% Handmade</span>
-                    <h3 className="text-3xl font-[family-name:var(--font-climate-crisis)] uppercase text-blue-900 mb-4 mt-2">Pure Wool<br />Perfection</h3>
+                    <h3 className="text-3xl font-extrabold tracking-tight uppercase text-blue-900 mb-4 mt-2">Handcrafted<br />Perfection</h3>
                     <p className="text-blue-700/80 max-w-md font-medium text-lg leading-relaxed">
                         Every piece is uniquely handcrafted by skilled artisans using the finest sustainably sourced wool and materials.
                     </p>
@@ -26,7 +26,7 @@ const Features = () => {
                     </svg>
                 </div>
                 <div>
-                    <h3 className="text-xl font-[family-name:var(--font-climate-crisis)] uppercase text-orange-950">Artisan<br />Keychains</h3>
+                    <h3 className="text-xl font-extrabold tracking-tight uppercase text-orange-950">Artisan<br />Keychains</h3>
                     <p className="text-orange-700 font-medium mt-2">Small gifts, big smiles</p>
                 </div>
             </div>
@@ -40,7 +40,7 @@ const Features = () => {
                     </svg>
                 </div>
                 <div className="z-10">
-                    <h3 className="text-xl font-[family-name:var(--font-climate-crisis)] uppercase text-slate-900">Custom<br />Orders</h3>
+                    <h3 className="text-xl font-extrabold tracking-tight uppercase text-slate-900">Custom<br />Orders</h3>
                     <p className="text-slate-500 font-medium mt-2">Made just for you</p>
                 </div>
             </div>
@@ -52,7 +52,7 @@ const Features = () => {
 
                 <div className="relative z-10 max-w-md text-center md:text-left">
                     <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-xs font-bold tracking-widest uppercase rounded-lg mb-4">Festive Edition</span>
-                    <h3 className="text-3xl md:text-4xl font-[family-name:var(--font-climate-crisis)] uppercase mb-4 leading-tight tracking-wide">Holiday Decor</h3>
+                    <h3 className="text-3xl md:text-4xl font-extrabold tracking-tight uppercase mb-4 leading-tight">Holiday Decor</h3>
                     <p className="text-blue-50 text-lg font-medium opacity-90">Get ready for the season with our handcrafted wool ornaments and festive decorations.</p>
                 </div>
 

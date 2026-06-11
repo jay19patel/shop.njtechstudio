@@ -1,12 +1,12 @@
 {
   "brand": {
-    "name": "Soul Craft Studio",
-    "shortName": "SCS",
-    "tagline": "Handcrafted with love, knitted with passion. Discover our exclusive collection of wool art, decorations, and unique keychains that tell a story.",
-    "email": "Khushipatelpatel112@gmail.com",
+    "name": "NJShop",
+    "shortName": "NJShop",
+    "tagline": "Premium items curated with passion. Discover our exclusive collection of home decorations and accessories.",
+    "email": "contact@njtechstudio.in",
     "phone": "+91 90238 96348",
     "location": "Valsad, Gujarat",
-    "instagram": "https://www.instagram.com/craftyyy111"
+    "instagram": "https://www.instagram.com/njtechstudio"
   },
   "categories": [
     {
@@ -30,7 +30,7 @@
   ],
   "products": [
     {
-      "name": "Soulful Tote",
+      "name": "NJ Tote",
       "price": "₹1499",
       "img": "/images/1.jpeg",
       "tag": "Handmade"
@@ -78,12 +78,7 @@
       "tag": "Exclusive"
     }
   ],
-  "founder": {
-    "name": "Khusi Patel",
-    "role": "Founder & Artist",
-    "image": "/images/founder.jpeg",
-    "quote": "Every loop of wool is a piece of my soul. I started this studio to bring warmth and happiness into people's homes through the art of knitting."
-  },
+
   "faqs": [
     {
       "q": "What materials do you use?",

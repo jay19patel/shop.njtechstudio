@@ -9,7 +9,7 @@ from .product  import CategoryViewSet, ProductViewSet, AdminProductViewSet
 from .cart     import CartViewSet
 from .order    import OrderViewSet, AdminOrderViewSet
 from .payment  import PaymentViewSet, UploadScreenshotView
-from .customer import AddressViewSet, ContactViewSet, TestimonialViewSet
+from .customer import AddressViewSet, ContactViewSet, TestimonialViewSet, FAQViewSet
 from .admin    import AdminDashboardStatsView, ContactMessageViewSet
 
 __all__ = [
@@ -18,6 +18,6 @@ __all__ = [
     "CartViewSet",
     "OrderViewSet", "AdminOrderViewSet",
     "PaymentViewSet", "UploadScreenshotView",
-    "AddressViewSet", "ContactViewSet", "TestimonialViewSet",
+    "AddressViewSet", "ContactViewSet", "TestimonialViewSet", "FAQViewSet",
     "AdminDashboardStatsView", "ContactMessageViewSet",
 ]

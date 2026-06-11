@@ -71,11 +71,11 @@ class EmailQueueTests(TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data['status'], 'PENDING')
         self.assertEqual(response.data['payment_status'], 'RECEIVED')
-        self.assertEqual(response.data['payment_reference'], f"PAY-SCS-{response.data['id']:06d}")
+        self.assertEqual(response.data['payment_reference'], f"PAY-NJ-{response.data['id']:06d}")
         self.assertEqual(response.data['upi_transaction_id'], 'UPI-TEST-249')
         email_log = EmailLog.objects.get(email_type=EmailLog.EmailType.ORDER_CONFIRMATION)
         self.assertEqual(email_log.status, EmailLog.Status.SENT)
-        self.assertEqual(email_log.attachment_name, f"Soul-Craft-Studio-Invoice-{response.data['id']}.pdf")
+        self.assertEqual(email_log.attachment_name, f"NJShop-Invoice-{response.data['id']}.pdf")
         self.assertGreater(len(email_log.attachment_data), 100)
 
     def test_status_and_payment_notifications_do_not_attach_invoice(self):

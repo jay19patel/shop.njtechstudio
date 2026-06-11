@@ -191,7 +191,7 @@ if REDIS_URL:
             "BACKEND": "django_redis.cache.RedisCache",
             "LOCATION": REDIS_URL,
             "TIMEOUT": CACHE_TIMEOUT,
-            "KEY_PREFIX": os.getenv("CACHE_KEY_PREFIX", "khusi"),
+            "KEY_PREFIX": os.getenv("CACHE_KEY_PREFIX", "njshop"),
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
                 "IGNORE_EXCEPTIONS": os.getenv("CACHE_IGNORE_EXCEPTIONS", "True").lower() == "true",
@@ -202,17 +202,16 @@ else:
     CACHES = {
         "default": {
             "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-            "LOCATION": "khusi-local-cache",
+            "LOCATION": "njshop-local-cache",
             "TIMEOUT": CACHE_TIMEOUT,
         }
     }
 
 # CORS Settings
-CORS_ALLOW_ALL_ORIGINS = os.getenv("CORS_ALLOW_ALL_ORIGINS", "False").lower() == "true"
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
-    origin.strip()
-    for origin in os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
-    if origin.strip()
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
 ]
 
 # Django REST Framework Settings
@@ -264,7 +263,7 @@ EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True').lower() == 'true'
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'Soul Craft Studio <no-reply@soulcraftstudio.com>')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'NJShop <no-reply@njshop.com>')
 
 # Frontend URL (used in email templates for links)
 FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:3000')

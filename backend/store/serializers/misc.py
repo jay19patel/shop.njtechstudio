@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Payment, Testimonial, Address, Contact, ContactMessage
+from ..models import Payment, Testimonial, Address, Contact, ContactMessage, FAQ
 
 
 class PaymentSerializer(serializers.ModelSerializer):
@@ -32,4 +32,10 @@ class ContactSerializer(serializers.ModelSerializer):
 class ContactMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactMessage
+        fields = '__all__'
+
+
+class FAQSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FAQ
         fields = '__all__'

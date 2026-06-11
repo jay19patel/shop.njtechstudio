@@ -23,7 +23,7 @@ function VerifyErrorPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 selection:bg-orange-200">
+    <div className="min-h-screen bg-white flex flex-col font-sans text-slate-900 selection:bg-slate-900/30">
       <Navbar />
 
       <main className="flex-grow flex items-center justify-center px-4 py-20 text-center">
@@ -32,7 +32,7 @@ function VerifyErrorPageContent() {
           <div className="bg-white rounded-[40px] shadow-2xl shadow-slate-200/50 border border-slate-100 p-8 md:p-12 relative overflow-hidden">
             {/* Design accents */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-red-50 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-32 h-32 bg-orange-50 rounded-full blur-3xl -ml-16 -mb-16 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-slate-100 rounded-full blur-3xl -ml-16 -mb-16 pointer-events-none" />
 
             <div className="relative z-10 flex flex-col items-center gap-8">
               <div className="bg-red-50 w-20 h-20 rounded-full flex items-center justify-center ring-8 ring-red-100/50">
@@ -40,7 +40,7 @@ function VerifyErrorPageContent() {
               </div>
 
               <div className="flex flex-col gap-3">
-                <h1 className="text-3xl font-[family-name:var(--font-climate-crisis)] uppercase text-blue-950 leading-tight">
+                <h1 className="text-3xl font-extrabold tracking-tight uppercase text-blue-950 leading-tight">
                   Oops! <span className="text-red-600">{title}</span>
                 </h1>
                 <p className="text-slate-500 text-sm font-medium">
@@ -59,7 +59,7 @@ function VerifyErrorPageContent() {
 
                 <Link 
                   href="/" 
-                  className="w-full bg-white border border-slate-200 text-slate-600 rounded-2xl py-4 font-bold text-sm hover:bg-slate-50 transition-all flex items-center justify-center gap-3"
+                  className="w-full bg-white border border-slate-100 text-slate-600 rounded-2xl py-4 font-bold text-sm hover:bg-white transition-all flex items-center justify-center gap-3"
                 >
                   <ArrowLeft className="w-5 h-5" />
                   <span>Back to Home</span>
@@ -77,7 +77,7 @@ function VerifyErrorPageContent() {
 
 function VerifyErrorLoadingFallback() {
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900">
+    <div className="min-h-screen bg-white flex flex-col font-sans text-slate-900">
       <Navbar />
       <main className="flex-grow flex items-center justify-center px-4 py-20 text-center">
         <div className="w-full max-w-md h-[420px] rounded-[40px] bg-white border border-slate-100 shadow-xl animate-pulse" />

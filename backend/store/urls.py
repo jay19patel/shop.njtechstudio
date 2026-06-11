@@ -5,7 +5,7 @@ from .views import (
     PaymentViewSet, TestimonialViewSet, AddressViewSet, ContactViewSet,
     RegisterView, LoginView, MeView, LogoutView, GoogleLogin, UploadScreenshotView,
     AdminDashboardStatsView, AdminOrderViewSet, AdminProductViewSet,
-    ContactMessageViewSet
+    ContactMessageViewSet, FAQViewSet
 )
 
 router = DefaultRouter()
@@ -15,6 +15,7 @@ router.register(r'carts', CartViewSet, basename='cart')
 router.register(r'orders', OrderViewSet, basename='order')
 router.register(r'payments', PaymentViewSet, basename='payment')
 router.register(r'testimonials', TestimonialViewSet, basename='testimonial')
+router.register(r'faqs', FAQViewSet, basename='faq')
 
 router.register(r'addresses', AddressViewSet, basename='address')
 router.register(r'contacts', ContactViewSet, basename='contact')

@@ -27,35 +27,34 @@ export default function TermsPage() {
     ];
 
     return (
-        <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 selection:bg-orange-200">
+        <div className="min-h-screen bg-white flex flex-col font-sans text-slate-900 selection:bg-slate-900/30">
             <Navbar />
 
-            <main className="flex-grow w-full max-w-4xl mx-auto px-4 py-16 md:py-24 flex flex-col gap-12">
-                <section className="text-center flex flex-col items-center gap-6">
-                    <span className="text-orange-600 font-extrabold tracking-widest uppercase text-sm">Soul Craft Studio</span>
-                    <h1 className="text-4xl md:text-6xl font-[family-name:var(--font-climate-crisis)] uppercase text-blue-950 leading-tight">
-                        Store <span className="text-blue-600">Policies.</span>
+            <main className="flex-grow w-full max-w-3xl mx-auto px-4 py-12 md:py-20 flex flex-col gap-12">
+                <section className="flex flex-col gap-4">
+                    <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
+                        Store Policies
                     </h1>
-                    <p className="text-lg text-slate-500 font-medium leading-relaxed max-w-2xl">
+                    <p className="text-slate-500 font-medium">
                         Please review our store policies, terms of service, and privacy guidelines before placing an order. By making a purchase, you agree to these terms.
                     </p>
                 </section>
 
-                <section className="bg-white p-8 md:p-12 rounded-[40px] border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-col gap-10">
+                <section className="flex flex-col gap-10">
                     {policies.map((policy, idx) => (
-                        <div key={idx} className="flex flex-col gap-3">
-                            <h3 className="text-xl font-[family-name:var(--font-climate-crisis)] uppercase text-orange-500 tracking-wide">
+                        <div key={idx} className="flex flex-col gap-2">
+                            <h3 className="text-lg font-semibold text-slate-800">
                                 {policy.title}
                             </h3>
-                            <p className="text-slate-600 font-medium leading-relaxed">
+                            <p className="text-slate-600 leading-relaxed">
                                 {policy.desc}
                             </p>
                         </div>
                     ))}
 
-                    <div className="pt-8 border-t border-slate-100 flex flex-col gap-4 text-center mt-4">
-                        <p className="text-slate-500 text-sm font-bold">
-                            If you have any questions or concerns, please get in touch with us via our <a href="/contact" className="text-blue-600 hover:text-orange-500 transition-colors">Contact Page</a>.
+                    <div className="pt-8 border-t border-slate-100 flex flex-col gap-4 mt-4">
+                        <p className="text-slate-500 text-sm">
+                            If you have any questions or concerns, please get in touch with us via our <a href="/contact" className="text-slate-900 font-medium hover:underline transition-all">Contact Page</a>.
                         </p>
                     </div>
                 </section>

@@ -9,10 +9,10 @@ import { getProducts, getCategories, normalizeProduct } from '../../lib/api';
 // ── Skeleton card shown while loading ─────────────────────────────────────
 const SkeletonCard = () => (
   <div className="flex flex-col gap-6 w-full animate-pulse">
-    <div className="aspect-square rounded-[32px] bg-slate-100" />
+    <div className="aspect-square rounded-[32px] bg-slate-50" />
     <div className="flex flex-col gap-2 px-1">
-      <div className="h-4 bg-slate-100 rounded-full w-3/4" />
-      <div className="h-3 bg-slate-100 rounded-full w-1/3" />
+      <div className="h-4 bg-slate-50 rounded-full w-3/4" />
+      <div className="h-3 bg-slate-50 rounded-full w-1/3" />
     </div>
   </div>
 );
@@ -20,6 +20,7 @@ const SkeletonCard = () => (
 // ── Main component ─────────────────────────────────────────────────────────
 const ShopPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -47,6 +48,7 @@ const ShopPage = () => {
     try {
       const params = { page: isLoadMore ? page + 1 : 1, page_size: 16 };
       if (selectedCategory !== 'all') params.category_id = selectedCategory;
+      if (searchQuery.trim()) params.search = searchQuery.trim();
       
       const data = await getProducts(params);
       const newProducts = (data?.results ?? []).map(normalizeProduct);
@@ -74,64 +76,79 @@ const ShopPage = () => {
   }, [selectedCategory]);
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 selection:bg-orange-200">
+    <div className="min-h-screen bg-white flex flex-col font-sans text-slate-900 selection:bg-slate-900/30">
       <Navbar />
 
       <main className="flex-grow w-full max-w-7xl mx-auto px-4 py-12 md:py-20">
-        {/* Header */}
-        <div className="text-center mb-16 flex flex-col gap-4">
-          <span className="text-orange-600 font-extrabold tracking-widest uppercase text-sm">
-            Discover Our Collection
-          </span>
-          <h1 className="text-4xl md:text-6xl font-[family-name:var(--font-climate-crisis)] uppercase text-blue-950 mb-6">
-            Soul Craft <span className="text-blue-600">Shop.</span>
-          </h1>
-          <p className="text-slate-500 max-w-2xl mx-auto text-lg font-sans">
-            Explore our complete collection of handcrafted wool art, apparel, and
-            decorations. Each piece is made with love and attention to detail.
-          </p>
+        {/* Header - Search & Category Filters */}
+        <div className="flex flex-col items-center gap-6 mb-12 px-4">
+          
+          {/* Search Bar */}
+          <div className="relative w-full max-w-md">
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  fetchProducts(false);
+                }
+              }}
+              className="w-full pl-12 pr-4 py-3 rounded-full border border-slate-200 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all shadow-sm"
+            />
+            <svg 
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+
+          {/* Category Filters */}
+          <div className="flex flex-wrap justify-center gap-3">
+            <button
+              key="category-all"
+              onClick={() => setSelectedCategory('all')}
+              className={`px-6 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 ${
+                selectedCategory === 'all'
+                  ? 'bg-slate-900 text-white shadow-md'
+                  : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shadow-sm'
+              }`}
+            >
+              All
+            </button>
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`px-6 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 ${
+                  selectedCategory === cat.id
+                    ? 'bg-slate-900 text-white shadow-md'
+                    : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shadow-sm'
+                }`}
+              >
+                {cat.name}
+              </button>
+            ))}
+          </div>
+          
           {!loading && !error && (
-            <div className="mt-8 px-6 py-2 bg-white/50 backdrop-blur-sm rounded-full border border-slate-100 inline-block mx-auto text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+            <div className="text-xs font-medium text-slate-400 uppercase tracking-widest mt-2">
               Showing {products.length} of {totalCount} Products
             </div>
           )}
         </div>
 
-        {/* Category Filters */}
-        <div className="flex flex-wrap justify-center gap-3 mb-16 px-4">
-          <button
-            key="category-all"
-            onClick={() => setSelectedCategory('all')}
-            className={`px-8 py-3 rounded-full text-sm font-black uppercase tracking-widest transition-all duration-300 ${
-              selectedCategory === 'all'
-                ? 'bg-orange-500 text-white shadow-xl shadow-orange-100 -translate-y-1'
-                : 'bg-white text-slate-600 hover:bg-orange-50 shadow-sm'
-            }`}
-          >
-            All Products
-          </button>
-          {categories.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setSelectedCategory(cat.id)}
-              className={`px-8 py-3 rounded-full text-sm font-black uppercase tracking-widest transition-all duration-300 ${
-                selectedCategory === cat.id
-                  ? 'bg-orange-500 text-white shadow-xl shadow-orange-100 -translate-y-1'
-                  : 'bg-white text-slate-600 hover:bg-orange-50 shadow-sm'
-              }`}
-            >
-              {cat.name}
-            </button>
-          ))}
-        </div>
-
         {/* Error state */}
         {error && (
           <div className="text-center py-12">
-            <p className="text-red-400 font-bold">{error}</p>
+            <p className="text-red-500 font-medium mb-4">{error}</p>
             <button
-              onClick={fetchProducts}
-              className="mt-4 px-6 py-2 bg-orange-500 text-white rounded-full text-xs font-black uppercase tracking-widest hover:bg-orange-600 transition-colors"
+              onClick={() => fetchProducts(false)}
+              className="px-6 py-2 bg-slate-900 text-white rounded-full text-xs font-bold uppercase tracking-wider hover:bg-slate-800 transition-colors shadow-sm"
             >
               Try Again
             </button>
@@ -183,10 +200,10 @@ const ShopPage = () => {
                     {/* Info */}
                     <div className="flex flex-col gap-2 px-1">
                       <div className="flex justify-between items-center">
-                        <h3 className="text-base font-[family-name:var(--font-climate-crisis)] uppercase text-blue-950 leading-tight group-hover:text-orange-500 transition-colors truncate pr-2">
+                        <h3 className="text-base font-extrabold tracking-tight uppercase text-blue-950 leading-tight group-hover:text-slate-900 transition-colors truncate pr-2">
                           <Link href={`/shop/${product.id}`}>{product.name}</Link>
                         </h3>
-                        <span className="text-base font-black text-slate-700 font-sans whitespace-nowrap">
+                        <span className="text-base font-black text-slate-600 font-sans whitespace-nowrap">
                           {product.priceDisplay}
                         </span>
                       </div>
@@ -214,11 +231,11 @@ const ShopPage = () => {
             <button
               onClick={() => fetchProducts(true)}
               disabled={loadingMore}
-              className="px-12 py-4 bg-white border-2 border-slate-200 text-blue-950 rounded-full text-sm font-black uppercase tracking-widest hover:bg-slate-50 hover:border-blue-200 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3 shadow-lg shadow-slate-100 group"
+              className="px-12 py-4 bg-white border-2 border-slate-100 text-blue-950 rounded-full text-sm font-black uppercase tracking-widest hover:bg-white hover:border-blue-200 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3 shadow-lg shadow-slate-100 group"
             >
               {loadingMore ? (
                 <>
-                  <svg className="animate-spin h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <svg className="animate-spin h-5 w-5 text-slate-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
@@ -239,7 +256,7 @@ const ShopPage = () => {
         {/* Empty state */}
         {!loading && !error && products.length === 0 && (
           <div className="text-center py-20">
-            <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
               <svg className="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
               </svg>

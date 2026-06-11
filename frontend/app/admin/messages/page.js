@@ -71,7 +71,7 @@ export default function AdminMessagesPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col">
+      <div className="min-h-screen bg-white flex flex-col">
         <Navbar />
         <main className="flex-grow flex items-center justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600" />
@@ -81,7 +81,7 @@ export default function AdminMessagesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 selection:bg-indigo-100">
+    <div className="min-h-screen bg-white flex flex-col font-sans text-slate-900 selection:bg-indigo-100">
       <Navbar />
 
       <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
@@ -93,7 +93,7 @@ export default function AdminMessagesPage() {
               <Link href="/admin/dashboard" className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-indigo-600 transition-colors w-fit">
                 <ChevronLeft className="w-4 h-4" /> Dashboard
               </Link>
-              <h1 className="text-4xl md:text-5xl font-[family-name:var(--font-climate-crisis)] uppercase text-indigo-950">
+              <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight uppercase text-indigo-950">
                 Messages.
               </h1>
               <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">
@@ -103,10 +103,10 @@ export default function AdminMessagesPage() {
           </div>
 
           {/* List Section */}
-          <div className="bg-white rounded-[40px] border border-slate-100 shadow-xl shadow-slate-200/40 p-6 md:p-10 flex flex-col gap-8">
+          <div className="bg-white rounded-[40px] border border-slate-100 shadow-xl shadow-slate-200/30/40 p-6 md:p-10 flex flex-col gap-8">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <h2 className="text-xl font-black uppercase tracking-tight text-slate-900 flex items-center gap-3">
-                Inbox <span className="bg-slate-100 text-slate-500 text-xs px-3 py-1 rounded-full">{messages.length}</span>
+                Inbox <span className="bg-slate-50 text-slate-500 text-xs px-3 py-1 rounded-full">{messages.length}</span>
               </h2>
               <div className="relative w-full md:w-72">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -115,7 +115,7 @@ export default function AdminMessagesPage() {
                   placeholder="Search messages..." 
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full bg-slate-50 border-none rounded-2xl py-3 pl-10 pr-4 text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none transition-shadow"
+                  className="w-full bg-white border-none rounded-2xl py-3 pl-10 pr-4 text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none transition-shadow"
                 />
               </div>
             </div>
@@ -136,7 +136,7 @@ export default function AdminMessagesPage() {
                       <td colSpan="4" className="py-8 text-center text-slate-500 text-sm font-medium">No messages found.</td>
                     </tr>
                   ) : filteredMessages.map((msg) => (
-                    <tr key={msg.id} className={`hover:bg-slate-50/50 transition-colors group ${!msg.is_read ? 'bg-indigo-50/20' : ''}`}>
+                    <tr key={msg.id} className={`hover:bg-slate-500 transition-colors group ${!msg.is_read ? 'bg-indigo-50/20' : ''}`}>
                       <td className="py-4 pl-4 align-top">
                         <button 
                           onClick={() => toggleReadStatus(msg)}
@@ -152,7 +152,7 @@ export default function AdminMessagesPage() {
                       </td>
                       <td className="py-4 align-top">
                         <div className="flex flex-col gap-1">
-                          <span className={`text-sm ${!msg.is_read ? 'font-black text-slate-900' : 'font-bold text-slate-700'}`}>{msg.name}</span>
+                          <span className={`text-sm ${!msg.is_read ? 'font-black text-slate-900' : 'font-bold text-slate-600'}`}>{msg.name}</span>
                           <span className="text-[10px] font-bold text-slate-400 tracking-widest">{msg.email}</span>
                           <span className="text-[10px] font-bold text-indigo-400 mt-2 uppercase tracking-widest">
                             {new Date(msg.created_at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
@@ -161,7 +161,7 @@ export default function AdminMessagesPage() {
                       </td>
                       <td className="py-4 align-top max-w-sm">
                         <div className="flex flex-col gap-1 pr-6">
-                          <span className={`text-sm ${!msg.is_read ? 'font-black text-indigo-900' : 'font-bold text-slate-700'}`}>{msg.subject}</span>
+                          <span className={`text-sm ${!msg.is_read ? 'font-black text-indigo-900' : 'font-bold text-slate-600'}`}>{msg.subject}</span>
                           <p className="text-xs text-slate-500 font-medium whitespace-pre-wrap">{msg.message}</p>
                         </div>
                       </td>

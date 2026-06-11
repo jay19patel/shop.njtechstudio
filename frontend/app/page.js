@@ -1,30 +1,21 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
-import Hero from '../components/Hero';
-import Features from '../components/Features';
 import Categories from '../components/Categories';
-import Products from '../components/Products';
 import Testimonials from '../components/Testimonials';
-import Founder from '../components/Founder';
+import FAQ from '../components/FAQ';
 import Footer from '../components/Footer';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 selection:bg-orange-200">
+    <div className="min-h-screen flex flex-col font-sans text-slate-900 selection:bg-slate-900/30">
       <Navbar />
-      <Hero />
 
-      <main className="flex-grow w-full max-w-6xl mx-auto px-4 pt-8 md:pt-12 pb-16 flex flex-col items-center gap-24 md:gap-32">
-        <Features />
+      <main className="flex-grow w-full mx-auto px-4 py-16 flex flex-col items-center">
         <Categories />
-        <Products />
       </main>
 
       <Testimonials />
-
-      <main className="flex-grow w-full max-w-6xl mx-auto px-4 py-16 md:py-24 flex flex-col items-center">
-        <Founder />
-      </main>
+      <FAQ />
 
       <Footer />
     </div>

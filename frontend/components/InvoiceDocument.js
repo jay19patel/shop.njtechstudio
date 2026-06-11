@@ -29,7 +29,7 @@ export default function InvoiceDocument({ order, backHref, backLabel }) {
           <h1 className="text-center text-3xl font-bold">Invoice</h1>
 
           <div className="grid grid-cols-2 bg-stone-50 border border-stone-200 rounded mt-8 mb-9">
-            <InvoiceStat label="Invoice number" value={`SCS-${order.id}`} />
+            <InvoiceStat label="Invoice number" value={`NJ-${order.id}`} />
             <InvoiceStat label="Invoice date" value={new Date(order.created_at).toLocaleDateString('en-IN')} />
             <InvoiceStat label="Payment reference" value={order.payment_id || 'Not provided'} />
           </div>

@@ -13,7 +13,7 @@ import { getOrder, normalizeOrder } from '../../../lib/api';
 
 // ── Status config ──────────────────────────────────────────────────────────
 const STATUS_CONFIG = {
-  pending:    { Icon: Clock,       color: 'text-orange-500', bg: 'bg-orange-50 border-orange-100',  label: 'Pending' },
+  pending:    { Icon: Clock,       color: 'text-slate-900', bg: 'bg-slate-100 border-orange-100',  label: 'Pending' },
   processing: { Icon: Clock,       color: 'text-yellow-500', bg: 'bg-yellow-50 border-yellow-100',  label: 'Processing' },
   shipped:    { Icon: Truck,       color: 'text-blue-500',   bg: 'bg-blue-50 border-blue-100',      label: 'Shipped' },
   delivered:  { Icon: CheckCircle, color: 'text-green-500',  bg: 'bg-green-50 border-green-100',    label: 'Delivered' },
@@ -21,8 +21,8 @@ const STATUS_CONFIG = {
 };
 
 const PAYMENT_STATUS_CONFIG = {
-  pending: { label: 'Payment pending', color: 'text-slate-600 bg-slate-50 border-slate-100' },
-  received: { label: 'Awaiting verification', color: 'text-orange-600 bg-orange-50 border-orange-100' },
+  pending: { label: 'Payment pending', color: 'text-slate-600 bg-white border-slate-100' },
+  received: { label: 'Awaiting verification', color: 'text-orange-600 bg-slate-100 border-orange-100' },
   verified: { label: 'Verified', color: 'text-green-600 bg-green-50 border-green-100' },
   failed: { label: 'Failed', color: 'text-red-500 bg-red-50 border-red-100' },
 };
@@ -45,10 +45,10 @@ const OrderDetailPage = () => {
   // ── Loading ──────────────────────────────────────────────────────────────
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col">
+      <div className="min-h-screen bg-white flex flex-col">
         <Navbar />
         <main className="flex-grow flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500" />
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-200" />
         </main>
         <Footer />
       </div>
@@ -58,17 +58,17 @@ const OrderDetailPage = () => {
   // ── Error ────────────────────────────────────────────────────────────────
   if (error || !order) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col">
+      <div className="min-h-screen bg-white flex flex-col">
         <Navbar />
         <main className="flex-grow flex flex-col items-center justify-center gap-6 text-center px-4">
-          <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center">
+          <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center">
             <Package className="w-10 h-10 text-slate-300" />
           </div>
-          <h1 className="text-3xl font-[family-name:var(--font-climate-crisis)] uppercase text-blue-950">
+          <h1 className="text-3xl font-extrabold tracking-tight uppercase text-blue-950">
             Order Not Found
           </h1>
           <p className="text-slate-500 max-w-sm">{error || 'This order does not exist.'}</p>
-          <Link href="/orders" className="bg-blue-600 text-white px-8 py-3 rounded-full font-black uppercase tracking-widest text-sm shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all">
+          <Link href="/orders" className="bg-slate-900 text-white px-8 py-3 rounded-full font-black uppercase tracking-widest text-sm shadow-xl shadow-blue-100 hover:bg-slate-900/90 transition-all">
             My Orders
           </Link>
         </main>
@@ -82,7 +82,7 @@ const OrderDetailPage = () => {
   const paymentCfg = PAYMENT_STATUS_CONFIG[order.payment_status?.toLowerCase()] ?? PAYMENT_STATUS_CONFIG.pending;
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900">
+    <div className="min-h-screen bg-white flex flex-col font-sans text-slate-900">
       <Navbar />
 
       <main className="flex-grow w-full max-w-4xl mx-auto px-4 py-12 md:py-20">
@@ -90,7 +90,7 @@ const OrderDetailPage = () => {
           {/* Back */}
           <Link
             href="/orders"
-            className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-orange-500 w-fit transition-colors"
+            className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 w-fit transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
             My Orders
@@ -99,7 +99,7 @@ const OrderDetailPage = () => {
           {/* Title + Status */}
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="flex flex-col gap-2">
-              <h1 className="text-4xl font-[family-name:var(--font-climate-crisis)] uppercase text-blue-950">
+              <h1 className="text-4xl font-extrabold tracking-tight uppercase text-blue-950">
                 Order Details.
               </h1>
               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 font-mono">
@@ -116,7 +116,7 @@ const OrderDetailPage = () => {
               <Link
                 href={`/orders/${order.id}/invoice`}
                 target="_blank"
-                className="flex items-center gap-2 px-5 py-3 rounded-full bg-blue-600 text-white shadow-lg shadow-blue-200 hover:bg-blue-700 hover:shadow-xl transition-all active:scale-95"
+                className="flex items-center gap-2 px-5 py-3 rounded-full bg-slate-900 text-white shadow-lg shadow-blue-200 hover:bg-slate-900/90 hover:shadow-xl transition-all active:scale-95"
               >
                 <Printer className="w-4 h-4" />
                 <span className="text-[10px] font-black uppercase tracking-widest">Download Invoice</span>
@@ -135,7 +135,7 @@ const OrderDetailPage = () => {
                 <div className="flex flex-col gap-5">
                   {(order.items || []).map((item, idx) => (
                     <div key={idx} className="flex items-center gap-4">
-                      <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-100 overflow-hidden flex-shrink-0">
+                      <div className="w-16 h-16 rounded-2xl bg-white border border-slate-100 overflow-hidden flex-shrink-0">
                         {item.image ? (
                           <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                         ) : (
@@ -163,7 +163,7 @@ const OrderDetailPage = () => {
                 {/* Total */}
                 <div className="border-t border-slate-50 pt-5 flex justify-between items-center">
                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Grand Total</span>
-                  <span className="text-xl font-black text-blue-600">
+                  <span className="text-xl font-black text-slate-900">
                     ₹{(order.total_amount ?? 0).toLocaleString('en-IN')}
                   </span>
                 </div>
@@ -179,11 +179,11 @@ const OrderDetailPage = () => {
                 </div>
                 
                 <div className="flex flex-col gap-0 pl-4 md:pl-6 relative mt-2">
-                  <div className="absolute left-[31px] md:left-[39px] top-4 bottom-4 w-[2px] bg-slate-100" />
+                  <div className="absolute left-[31px] md:left-[39px] top-4 bottom-4 w-[2px] bg-slate-50" />
 
                   {/* 1. Order Placed */}
                   <div className={`flex items-start gap-6 relative z-10 py-4 ${order.date ? 'opacity-100' : 'opacity-40 grayscale'} ${order.status === 'CANCELLED' ? 'opacity-50 grayscale' : ''}`}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${order.date && order.status !== 'CANCELLED' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'bg-slate-200 text-slate-400'}`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${order.date && order.status !== 'CANCELLED' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'bg-slate-100 text-slate-400'}`}>
                       <Package className="w-4 h-4" />
                     </div>
                     <div className="flex flex-col gap-1 pt-1">
@@ -194,7 +194,7 @@ const OrderDetailPage = () => {
 
                   {/* 2. Payment Verified */}
                   <div className={`flex items-start gap-6 relative z-10 py-4 ${order.payment_verified_date ? 'opacity-100' : 'opacity-40 grayscale'} ${order.status === 'CANCELLED' ? 'opacity-50 grayscale' : ''}`}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${order.payment_verified_date && order.status !== 'CANCELLED' ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-200' : 'bg-slate-200 text-slate-400'}`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${order.payment_verified_date && order.status !== 'CANCELLED' ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-200' : 'bg-slate-100 text-slate-400'}`}>
                       <ShieldCheck className="w-4 h-4" />
                     </div>
                     <div className="flex flex-col gap-1 pt-1">
@@ -205,7 +205,7 @@ const OrderDetailPage = () => {
 
                   {/* 3. Processing */}
                   <div className={`flex items-start gap-6 relative z-10 py-4 ${order.processing_date ? 'opacity-100' : 'opacity-40 grayscale'} ${order.status === 'CANCELLED' ? 'opacity-50 grayscale' : ''}`}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${order.processing_date && order.status !== 'CANCELLED' ? 'bg-orange-500 text-white shadow-lg shadow-orange-200' : 'bg-slate-200 text-slate-400'}`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${order.processing_date && order.status !== 'CANCELLED' ? 'bg-slate-1000 text-white shadow-lg shadow-orange-200' : 'bg-slate-100 text-slate-400'}`}>
                       <Clock className="w-4 h-4" />
                     </div>
                     <div className="flex flex-col gap-1 pt-1">
@@ -216,7 +216,7 @@ const OrderDetailPage = () => {
 
                   {/* 4. Shipped */}
                   <div className={`flex items-start gap-6 relative z-10 py-4 ${order.shipped_date ? 'opacity-100' : 'opacity-40 grayscale'} ${order.status === 'CANCELLED' ? 'hidden' : ''}`}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${order.shipped_date ? 'bg-blue-500 text-white shadow-lg shadow-blue-200' : 'bg-slate-200 text-slate-400'}`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${order.shipped_date ? 'bg-blue-500 text-white shadow-lg shadow-blue-200' : 'bg-slate-100 text-slate-400'}`}>
                       <Truck className="w-4 h-4" />
                     </div>
                     <div className="flex flex-col gap-1 pt-1">
@@ -227,7 +227,7 @@ const OrderDetailPage = () => {
 
                   {/* 5. Delivered */}
                   <div className={`flex items-start gap-6 relative z-10 py-4 ${order.delivered_date ? 'opacity-100' : 'opacity-40 grayscale'} ${order.status === 'CANCELLED' ? 'hidden' : ''}`}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${order.delivered_date ? 'bg-green-500 text-white shadow-lg shadow-green-200' : 'bg-slate-200 text-slate-400'}`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${order.delivered_date ? 'bg-green-500 text-white shadow-lg shadow-green-200' : 'bg-slate-100 text-slate-400'}`}>
                       <CheckCircle className="w-4 h-4" />
                     </div>
                     <div className="flex flex-col gap-1 pt-1">
@@ -254,7 +254,7 @@ const OrderDetailPage = () => {
               {/* Shipping Address */}
               <div className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-6 md:p-8 flex flex-col gap-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-500">
+                  <div className="w-10 h-10 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-900">
                     <MapPin className="w-5 h-5" />
                   </div>
                   <h2 className="text-xs font-black uppercase tracking-[0.2em] text-blue-950">Shipping Address</h2>
@@ -311,12 +311,12 @@ const OrderDetailPage = () => {
               {/* Order date */}
               <div className="bg-white rounded-[32px] border border-slate-100 shadow-sm p-6 flex flex-col gap-2">
                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Placed On</span>
-                <span className="text-sm font-bold text-slate-700">{order.date}</span>
+                <span className="text-sm font-bold text-slate-600">{order.date}</span>
               </div>
 
               {/* Notes */}
               {order.notes && (
-                <div className="bg-orange-50 rounded-[32px] border border-orange-100 p-6 flex flex-col gap-2">
+                <div className="bg-slate-100 rounded-[32px] border border-orange-100 p-6 flex flex-col gap-2">
                   <span className="text-[10px] font-black uppercase tracking-widest text-orange-600">Notes</span>
                   <p className="text-sm text-orange-900">{order.notes}</p>
                 </div>

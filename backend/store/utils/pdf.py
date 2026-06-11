@@ -74,7 +74,7 @@ def generate_invoice_pdf(order) -> bytes:
         story.extend([logo, Spacer(1, 3 * mm)])
 
     story.extend([
-        Paragraph("Soul Craft Studio", brand),
+        Paragraph("NJShop", brand),
         Spacer(1, 2 * mm),
         Paragraph("HANDCRAFTED WITH LOVE", tagline),
         Spacer(1, 8 * mm),
@@ -86,7 +86,7 @@ def generate_invoice_pdf(order) -> bytes:
         [
             [Paragraph("Invoice number", label), Paragraph("Invoice date", label)],
             [
-                Paragraph(f"SCS-{order.id}", value),
+                Paragraph(f"NJ-{order.id}", value),
                 Paragraph(order.created_at.strftime("%d %b %Y"), value),
             ],
         ],
@@ -175,7 +175,7 @@ def generate_invoice_pdf(order) -> bytes:
         Spacer(1, 12 * mm),
         HRFlowable(width="100%", thickness=0.7, color=border),
         Spacer(1, 5 * mm),
-        Paragraph("Thank you for shopping with Soul Craft Studio. Keep this invoice for your records.", footer),
+        Paragraph("Thank you for shopping with NJShop. Keep this invoice for your records.", footer),
     ]
 
     doc.build(story)

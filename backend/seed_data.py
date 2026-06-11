@@ -6,7 +6,7 @@ from decimal import Decimal
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ecommerce.settings")
 django.setup()
 
-from store.models import Category, Product, ProductVariant, ProductImage
+from store.models import Category, Product, ProductVariant, ProductImage, FAQ, Testimonial
 
 def seed_data():
     print("Clearing existing catalog data...")
@@ -14,182 +14,178 @@ def seed_data():
     ProductVariant.objects.all().delete()
     Product.objects.all().delete()
     Category.objects.all().delete()
+    FAQ.objects.all().delete()
+    Testimonial.objects.all().delete()
 
     print("Creating Categories...")
-    # Category 1: Resin Art
-    cat_resin = Category.objects.create(
-        name="Resin Art",
-        slug="resin-art",
-        description="Handcrafted exquisite resin masterpieces.",
-        image_url="https://images.unsplash.com/photo-1544965850-6f81e35a1130?auto=format&fit=crop&w=800&q=80"
+    # Category 1: T-Shirts
+    cat_tshirts = Category.objects.create(
+        name="T-Shirts",
+        slug="t-shirts",
+        description="Premium casual t-shirts for everyday wear.",
+        image_url="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80"
     )
 
-    # Category 2: Handcrafted Soaps
-    cat_soaps = Category.objects.create(
-        name="Aesthetic Soaps",
-        slug="aesthetic-soaps",
-        description="Organic, beautifully scented handmade soaps.",
-        image_url="https://images.unsplash.com/photo-1600857062241-98e5dba7f214?auto=format&fit=crop&w=800&q=80"
+    # Category 2: Shirts
+    cat_shirts = Category.objects.create(
+        name="Shirts",
+        slug="shirts",
+        description="Elegant and comfortable shirts for all occasions.",
+        image_url="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80"
     )
 
-    # Category 3: Home Decor
-    cat_decor = Category.objects.create(
-        name="Home Decor",
-        slug="home-decor",
-        description="Elevate your living space with our unique pieces.",
-        image_url="https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80"
+    # Category 3: Jackets
+    cat_jackets = Category.objects.create(
+        name="Jackets",
+        slug="jackets",
+        description="Stylish jackets to keep you warm and looking sharp.",
+        image_url="https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=800&q=80"
     )
 
     print("Creating Products...")
     
     # --- Product 1 ---
     prod1 = Product.objects.create(
-        category=cat_resin,
-        name="Ocean Wave Resin Wall Clock",
-        slug="ocean-wave-resin-clock",
-        description="A mesmerizing wall clock featuring deep ocean blues and crashing white waves, handcrafted using premium epoxy resin.",
-        base_price=Decimal("2499.00"),
+        category=cat_tshirts,
+        name="Classic White Crew Neck T-Shirt",
+        slug="classic-white-crew-neck",
+        description="A timeless classic white t-shirt made with 100% organic cotton for ultimate comfort.",
+        base_price=Decimal("499.00"),
         is_active=True
     )
     ProductImage.objects.create(
         product=prod1,
-        image_url="https://images.unsplash.com/photo-1584285461230-1c71dddb2554?auto=format&fit=crop&w=800&q=80",
+        image_url="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80",
         is_primary=True
     )
-    ProductVariant.objects.create(
-        product=prod1, sku="RES-CLK-OCN-12", size="12 Inch", color="Ocean Blue", stock=15
-    )
-    ProductVariant.objects.create(
-        product=prod1, sku="RES-CLK-OCN-16", size="16 Inch", color="Ocean Blue", price_override=Decimal("3499.00"), stock=5
-    )
+    ProductVariant.objects.create(product=prod1, sku="TSH-WHT-S", size="S", color="White", stock=50)
+    ProductVariant.objects.create(product=prod1, sku="TSH-WHT-M", size="M", color="White", stock=100)
+    ProductVariant.objects.create(product=prod1, sku="TSH-WHT-L", size="L", color="White", stock=75)
 
     # --- Product 2 ---
     prod2 = Product.objects.create(
-        category=cat_resin,
-        name="Emerald Geode Serving Tray",
-        slug="emerald-geode-tray",
-        description="Serve your guests in style with this stunning emerald green geode-inspired tray, accented with gold leaf.",
-        base_price=Decimal("1850.00"),
+        category=cat_tshirts,
+        name="Graphic Oversized T-Shirt",
+        slug="graphic-oversized-tshirt",
+        description="Oversized fit graphic tee with a modern cyberpunk aesthetic. Perfect for streetwear lovers.",
+        base_price=Decimal("799.00"),
         is_active=True
     )
     ProductImage.objects.create(
         product=prod2,
-        image_url="https://images.unsplash.com/photo-1576088235332-9ecb5bc08b5e?auto=format&fit=crop&w=800&q=80",
+        image_url="https://images.unsplash.com/photo-1503342394128-c104d54dba01?auto=format&fit=crop&w=800&q=80",
         is_primary=True
     )
-    ProductVariant.objects.create(
-        product=prod2, sku="RES-TRY-EMD", size="Standard", color="Emerald Green", stock=20
-    )
+    ProductVariant.objects.create(product=prod2, sku="TSH-GRP-M", size="M", color="Black", stock=30)
+    ProductVariant.objects.create(product=prod2, sku="TSH-GRP-L", size="L", color="Black", stock=40)
 
     # --- Product 3 ---
     prod3 = Product.objects.create(
-        category=cat_soaps,
-        name="Lavender & Clay Artisan Soap",
-        slug="lavender-clay-soap",
-        description="Calming lavender essential oil blended with French pink clay. Gentle on the skin and a treat for the senses.",
-        base_price=Decimal("350.00"),
-        is_active=True
-    )
-    ProductImage.objects.create(
-        product=prod3,
-        image_url="https://images.unsplash.com/photo-1600857544200-b2f666a9a2ec?auto=format&fit=crop&w=800&q=80",
-        is_primary=True
-    )
-    ProductVariant.objects.create(
-        product=prod3, sku="SOP-LAV-CLY", size="120g", color="Pink/Purple", stock=50
-    )
-
-    # --- Product 4 ---
-    prod4 = Product.objects.create(
-        category=cat_soaps,
-        name="Charcoal Citrus Detox Bar",
-        slug="charcoal-citrus-soap",
-        description="Activated charcoal for deep cleansing, infused with uplifting sweet orange and lemon oils.",
-        base_price=Decimal("300.00"),
-        is_active=True
-    )
-    ProductImage.objects.create(
-        product=prod4,
-        image_url="https://images.unsplash.com/photo-1610484826967-09c5720778c7?auto=format&fit=crop&w=800&q=80",
-        is_primary=True
-    )
-    ProductVariant.objects.create(
-        product=prod4, sku="SOP-CHR-CTR", size="120g", color="Charcoal Black", stock=40
-    )
-
-    # --- Product 5 ---
-    prod5 = Product.objects.create(
-        category=cat_decor,
-        name="Minimalist Ceramic Vase",
-        slug="minimalist-ceramic-vase",
-        description="A sleek, modern ceramic vase with a matte finish. Perfect for dried pampas grass or fresh blooms.",
+        category=cat_shirts,
+        name="Slim Fit Oxford Shirt",
+        slug="slim-fit-oxford-shirt",
+        description="Classic oxford shirt in light blue. Tailored slim fit for a sharp, professional look.",
         base_price=Decimal("1299.00"),
         is_active=True
     )
     ProductImage.objects.create(
-        product=prod5,
-        image_url="https://images.unsplash.com/photo-1581783342308-f792dbdd27c5?auto=format&fit=crop&w=800&q=80",
+        product=prod3,
+        image_url="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80",
         is_primary=True
     )
-    ProductVariant.objects.create(
-        product=prod5, sku="DCR-VAS-WHT", size="Medium", color="Matte White", stock=25
+    ProductVariant.objects.create(product=prod3, sku="SHT-OXF-M", size="M", color="Light Blue", stock=20)
+    ProductVariant.objects.create(product=prod3, sku="SHT-OXF-L", size="L", color="Light Blue", stock=25)
+
+    # --- Product 4 ---
+    prod4 = Product.objects.create(
+        category=cat_shirts,
+        name="Casual Flannel Shirt",
+        slug="casual-flannel-shirt",
+        description="Soft, cozy flannel shirt in a red and black check pattern.",
+        base_price=Decimal("999.00"),
+        is_active=True
     )
+    ProductImage.objects.create(
+        product=prod4,
+        image_url="https://images.unsplash.com/photo-1589902860314-e910cb96d32f?auto=format&fit=crop&w=800&q=80",
+        is_primary=True
+    )
+    ProductVariant.objects.create(product=prod4, sku="SHT-FLN-L", size="L", color="Red/Black", stock=15)
+
+    # --- Product 5 ---
+    prod5 = Product.objects.create(
+        category=cat_jackets,
+        name="Classic Denim Jacket",
+        slug="classic-denim-jacket",
+        description="Vintage wash denim jacket with silver hardware. A must-have staple for your wardrobe.",
+        base_price=Decimal("2499.00"),
+        is_active=True
+    )
+    ProductImage.objects.create(
+        product=prod5,
+        image_url="https://images.unsplash.com/photo-1576871337622-98d48d1cf531?auto=format&fit=crop&w=800&q=80",
+        is_primary=True
+    )
+    ProductVariant.objects.create(product=prod5, sku="JKT-DNM-M", size="M", color="Blue Wash", stock=10)
+    ProductVariant.objects.create(product=prod5, sku="JKT-DNM-L", size="L", color="Blue Wash", stock=12)
 
     # --- Product 6 ---
     prod6 = Product.objects.create(
-        category=cat_decor,
-        name="Macrame Wall Hanging",
-        slug="macrame-wall-hanging",
-        description="Boho-chic woven wall art made from 100% natural cotton cord, featuring intricate knot patterns.",
-        base_price=Decimal("1599.00"),
+        category=cat_jackets,
+        name="Faux Leather Biker Jacket",
+        slug="faux-leather-biker-jacket",
+        description="Edgy biker jacket made from premium vegan leather.",
+        base_price=Decimal("3499.00"),
         is_active=True
     )
     ProductImage.objects.create(
         product=prod6,
-        image_url="https://images.unsplash.com/photo-1515546200212-07a8fc5d4ec3?auto=format&fit=crop&w=800&q=80",
+        image_url="https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=800&q=80",
         is_primary=True
     )
-    ProductVariant.objects.create(
-        product=prod6, sku="DCR-MAC-WHL", size="Large", color="Natural Beige", stock=10
+    ProductVariant.objects.create(product=prod6, sku="JKT-LTH-M", size="M", color="Black", stock=8)
+
+    print("Creating FAQs...")
+    FAQ.objects.create(
+        question="How long does shipping take?",
+        answer="We process all orders within 24 hours. Standard shipping typically takes 3-5 business days depending on your location.",
+        order=1
+    )
+    FAQ.objects.create(
+        question="What is your return policy?",
+        answer="We offer a 15-day return policy for all unworn and unwashed items with tags attached. Please contact our support team to initiate a return.",
+        order=2
+    )
+    FAQ.objects.create(
+        question="Do you ship internationally?",
+        answer="Currently, we only ship within India. We are working hard to bring our products to international customers soon!",
+        order=3
     )
 
-    # --- Product 7 ---
-    prod7 = Product.objects.create(
-        category=cat_resin,
-        name="Amethyst Coaster Set (4 pcs)",
-        slug="amethyst-coaster-set",
-        description="Set of 4 luxury coasters with amethyst purple hues and a striking gold painted rim.",
-        base_price=Decimal("1100.00"),
-        is_active=True
+    print("Creating Testimonials...")
+    Testimonial.objects.create(
+        name="Rahul Verma",
+        role="Verified Buyer",
+        content="The fit of the classic white t-shirt is just perfect. Will definitely buy more!",
+        rating=5,
+        image_url="https://i.pravatar.cc/150?u=rahul"
     )
-    ProductImage.objects.create(
-        product=prod7,
-        image_url="https://images.unsplash.com/photo-1620063640032-474be6ab000a?auto=format&fit=crop&w=800&q=80",
-        is_primary=True
+    Testimonial.objects.create(
+        name="Priya Sharma",
+        role="Verified Buyer",
+        content="Absolutely in love with the denim jacket. The quality is top-notch and it looks amazing.",
+        rating=5,
+        image_url="https://i.pravatar.cc/150?u=priya"
     )
-    ProductVariant.objects.create(
-        product=prod7, sku="RES-CST-AMY-4", size="4-Piece Set", color="Purple/Gold", stock=30
-    )
-
-    # --- Product 8 ---
-    prod8 = Product.objects.create(
-        category=cat_soaps,
-        name="Himalayan Salt Scrub Bar",
-        slug="himalayan-salt-scrub",
-        description="Exfoliating bar packed with pink Himalayan salt and moisturizing shea butter.",
-        base_price=Decimal("400.00"),
-        is_active=True
-    )
-    ProductImage.objects.create(
-        product=prod8,
-        image_url="https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&w=800&q=80",
-        is_primary=True
-    )
-    ProductVariant.objects.create(
-        product=prod8, sku="SOP-HIM-SCR", size="130g", color="Pink", stock=45
+    Testimonial.objects.create(
+        name="Aman Gupta",
+        role="Verified Buyer",
+        content="Great collection of shirts. The flannel one is extremely comfortable for daily wear.",
+        rating=4,
+        image_url="https://i.pravatar.cc/150?u=aman"
     )
 
-    print("Successfully seeded catalog data!")
+    print("Successfully seeded catalog data with clothing, FAQs, and Testimonials!")
 
 if __name__ == '__main__':
     seed_data()

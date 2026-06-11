@@ -118,7 +118,7 @@ export default function AdminProductsPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col">
+      <div className="min-h-screen bg-white flex flex-col">
         <Navbar />
         <main className="flex-grow flex items-center justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600" />
@@ -128,7 +128,7 @@ export default function AdminProductsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 selection:bg-indigo-100">
+    <div className="min-h-screen bg-white flex flex-col font-sans text-slate-900 selection:bg-indigo-100">
       <Navbar />
 
       <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
@@ -140,7 +140,7 @@ export default function AdminProductsPage() {
               <Link href="/admin/dashboard" className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-indigo-600 transition-colors w-fit">
                 <ChevronLeft className="w-4 h-4" /> Dashboard
               </Link>
-              <h1 className="text-4xl md:text-5xl font-[family-name:var(--font-climate-crisis)] uppercase text-indigo-950">
+              <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight uppercase text-indigo-950">
                 Products.
               </h1>
               <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">
@@ -157,10 +157,10 @@ export default function AdminProductsPage() {
           </div>
 
           {/* List Section */}
-          <div className="bg-white rounded-[40px] border border-slate-100 shadow-xl shadow-slate-200/40 p-6 md:p-10 flex flex-col gap-8">
+          <div className="bg-white rounded-[40px] border border-slate-100 shadow-xl shadow-slate-200/30/40 p-6 md:p-10 flex flex-col gap-8">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <h2 className="text-xl font-black uppercase tracking-tight text-slate-900 flex items-center gap-3">
-                All Products <span className="bg-slate-100 text-slate-500 text-xs px-3 py-1 rounded-full">{products.length}</span>
+                All Products <span className="bg-slate-50 text-slate-500 text-xs px-3 py-1 rounded-full">{products.length}</span>
               </h2>
               <div className="relative w-full md:w-72">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -169,7 +169,7 @@ export default function AdminProductsPage() {
                   placeholder="Search products..." 
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full bg-slate-50 border-none rounded-2xl py-3 pl-10 pr-4 text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none transition-shadow"
+                  className="w-full bg-white border-none rounded-2xl py-3 pl-10 pr-4 text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none transition-shadow"
                 />
               </div>
             </div>
@@ -190,9 +190,9 @@ export default function AdminProductsPage() {
                       <td colSpan="4" className="py-8 text-center text-slate-500 text-sm font-medium">No products found.</td>
                     </tr>
                   ) : filteredProducts.map((product) => (
-                    <tr key={product.id} className="hover:bg-slate-50/50 transition-colors group">
+                    <tr key={product.id} className="hover:bg-slate-500 transition-colors group">
                       <td className="py-4 pl-4 align-middle">
-                        <div className="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 overflow-hidden flex items-center justify-center">
                           {product.image ? (
                             <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
                           ) : (
@@ -238,11 +238,11 @@ export default function AdminProductsPage() {
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-[40px] w-full max-w-lg shadow-2xl overflow-hidden flex flex-col transform transition-all">
-            <div className="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+            <div className="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-500">
               <h3 className="text-xl font-black uppercase tracking-tight text-indigo-950">
                 {editingProduct ? 'Edit Product' : 'Add New Product'}
               </h3>
-              <button onClick={closeModal} className="text-slate-400 hover:text-slate-700 bg-white p-2 rounded-full shadow-sm">
+              <button onClick={closeModal} className="text-slate-400 hover:text-slate-600 bg-white p-2 rounded-full shadow-sm">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -255,7 +255,7 @@ export default function AdminProductsPage() {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="w-full bg-slate-50 border-none rounded-xl py-3 px-4 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-indigo-500 outline-none"
+                  className="w-full bg-white border-none rounded-xl py-3 px-4 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-indigo-500 outline-none"
                 />
               </div>
 
@@ -266,7 +266,7 @@ export default function AdminProductsPage() {
                   required
                   value={formData.price}
                   onChange={(e) => setFormData({...formData, price: e.target.value})}
-                  className="w-full bg-slate-50 border-none rounded-xl py-3 px-4 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-indigo-500 outline-none"
+                  className="w-full bg-white border-none rounded-xl py-3 px-4 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-indigo-500 outline-none"
                 />
               </div>
 
@@ -276,7 +276,7 @@ export default function AdminProductsPage() {
                   rows={4}
                   value={formData.description}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
-                  className="w-full bg-slate-50 border-none rounded-xl py-3 px-4 text-sm font-medium text-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none resize-none"
+                  className="w-full bg-white border-none rounded-xl py-3 px-4 text-sm font-medium text-slate-600 focus:ring-2 focus:ring-indigo-500 outline-none resize-none"
                 />
               </div>
 
@@ -286,12 +286,12 @@ export default function AdminProductsPage() {
                   type="file" 
                   accept="image/*"
                   onChange={(e) => setFormData({...formData, image: e.target.files[0]})}
-                  className="w-full bg-slate-50 border-none rounded-xl py-3 px-4 text-sm font-medium text-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none"
+                  className="w-full bg-white border-none rounded-xl py-3 px-4 text-sm font-medium text-slate-600 focus:ring-2 focus:ring-indigo-500 outline-none"
                 />
               </div>
 
               <div className="pt-4 border-t border-slate-100 flex justify-end gap-3">
-                <button type="button" onClick={closeModal} className="px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest text-slate-500 hover:bg-slate-100 transition-colors">
+                <button type="button" onClick={closeModal} className="px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest text-slate-500 hover:bg-slate-50 transition-colors">
                   Cancel
                 </button>
                 <button type="submit" className="bg-indigo-600 text-white px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition-colors">

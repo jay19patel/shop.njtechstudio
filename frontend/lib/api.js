@@ -1,14 +1,17 @@
 /**
  * lib/api.js
  * ──────────
- * Central API client for Soul Craft Studio.
+ * Central API client for NJShop.
  * All pages import from here — never fetch() directly.
  *
  * BASE URL is read from NEXT_PUBLIC_API_URL env var so it works
  * in both dev (localhost:8000) and production without code changes.
  */
 
-export const API_BASE = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api").replace(/\/$/, "");
+import siteData from '../data/siteData.json';
+import itemsData from '../data/items.json';
+
+export const API_BASE = (process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api").replace(/\/$/, "");
 export const MEDIA_BASE = API_BASE.includes("/api") ? API_BASE.split("/api")[0] : API_BASE;
 
 /** Base prefix for shop API routes. Set to empty string for Django integration. */
@@ -143,11 +146,26 @@ function buildQuery(params = {}) {
  * @returns {Promise<Array>}
  */
 export async function getCategories() {
-  const data = await apiFetch(`${SHOP_API_PREFIX}/categories/${buildQuery({ page_size: 100 })}`, {
-    requireAuth: false,
-  });
-  const results = data?.results ?? [];
-  return results.map(normalizeCategory);
+  try {
+    const data = await apiFetch(`${SHOP_API_PREFIX}/categories/${buildQuery({ page_size: 100 })}`, {
+      requireAuth: false,
+    });
+    const results = data?.results ?? [];
+    if (results && results.length > 0) {
+      return results.map(normalizeCategory);
+    }
+  } catch (err) {
+    console.warn("API unreachable, falling back to local categories", err);
+  }
+  // Fallback to local site data categories
+  return (siteData.categories || []).map((cat, idx) => ({
+    id: cat.id || String(idx + 1),
+    name: cat.name,
+    slug: cat.name.toLowerCase().replace(/\s+/g, '-'),
+    img: cat.img,
+    image: cat.img,
+    description: cat.name,
+  }));
 }
 
 /**
@@ -155,10 +173,30 @@ export async function getCategories() {
  * @returns {Promise<Array>}
  */
 export async function getTestimonials() {
-  const data = await apiFetch(`/testimonials/${buildQuery({ page_size: 50 })}`, {
-    requireAuth: false,
-  });
-  return data?.results ?? [];
+  try {
+    const data = await apiFetch(`/testimonials/${buildQuery({ page_size: 50 })}`, {
+      requireAuth: false,
+    });
+    if (data && data.results && data.results.length > 0) {
+      return data.results;
+    }
+  } catch (err) {
+    console.warn("API unreachable, falling back to local testimonials", err);
+  }
+  return [
+    {
+      name: "Priya Shah",
+      role: "Repeat Customer",
+      content: "The products look even better in person. Packaging was neat and gifting-ready.",
+      rating: 5,
+    },
+    {
+      name: "Aarav Mehta",
+      role: "Verified Buyer",
+      content: "Excellent quality and finish. The details feel very premium.",
+      rating: 5,
+    }
+  ];
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -169,18 +207,71 @@ export async function getTestimonials() {
  * Fetch a paginated list of products with optional filters.
  */
 export async function getProducts(params = {}) {
-  return apiFetch(`${SHOP_API_PREFIX}/products/${buildQuery({ page_size: 50, ...params })}`, {
-    requireAuth: false,
-  });
+  try {
+    const data = await apiFetch(`${SHOP_API_PREFIX}/products/${buildQuery({ page_size: 50, ...params })}`, {
+      requireAuth: false,
+    });
+    if (data && data.results && data.results.length > 0) {
+      return data;
+    }
+  } catch (err) {
+    console.warn("API unreachable, falling back to local products list", err);
+  }
+  
+  // Fallback emulation
+  let localProducts = itemsData.products || [];
+  if (params.category_id && params.category_id !== 'all') {
+    const selectedCat = (siteData.categories || []).find(
+      c => String(c.id) === String(params.category_id) || c.name.toLowerCase() === String(params.category_id).toLowerCase()
+    );
+    const catName = selectedCat ? selectedCat.name.toLowerCase() : '';
+    localProducts = localProducts.filter(
+      p => p.category?.toLowerCase() === catName || String(p.category_id) === String(params.category_id)
+    );
+  }
+  
+  const page = params.page || 1;
+  const pageSize = params.page_size || 8;
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize;
+  const paginated = localProducts.slice(start, end);
+  
+  return {
+    results: paginated.map(p => ({
+      ...p,
+      price_value: p.price,
+      price: `₹${p.price}`,
+    })),
+    total: localProducts.length
+  };
 }
 
 /**
  * Fetch a single product by its MongoDB ObjectId string.
  */
 export async function getProduct(id) {
-  return apiFetch(`${SHOP_API_PREFIX}/products/${id}`, {
-    requireAuth: false,
-  });
+  try {
+    return await apiFetch(`${SHOP_API_PREFIX}/products/${id}`, {
+      requireAuth: false,
+    });
+  } catch (err) {
+    console.warn("API unreachable, falling back to local product details", err);
+  }
+  
+  // Find in local items list
+  const prod = (itemsData.products || []).find(p => String(p.id) === String(id));
+  if (prod) {
+    return {
+      ...prod,
+      price_value: prod.price,
+      price: `₹${prod.price}`,
+      primary_image: prod.image,
+      variants: [
+        { id: 1, sku: `${prod.name.slice(0, 3).toUpperCase()}-VAR`, size: "Standard", color: "Default", stock: 10 }
+      ]
+    };
+  }
+  throw new Error("Product not found locally");
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -505,6 +596,7 @@ export function normalizeProduct(p) {
     images: mergedGallery.length ? mergedGallery : mainImage ? [mainImage] : [],
     priceValue: p.price_value ?? 0,
     priceDisplay: p.price || `₹${p.price_value ?? 0}`,
+    category: typeof p.category === 'object' && p.category !== null ? p.category.name : p.category,
   };
 }
 

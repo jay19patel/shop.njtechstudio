@@ -72,7 +72,7 @@ class Order(models.Model):
         super().save(*args, **kwargs)
 
         if not self.payment_reference:
-            self.payment_reference = f"PAY-SCS-{self.pk:06d}"
+            self.payment_reference = f"PAY-NJ-{self.pk:06d}"
             Order.objects.filter(pk=self.pk).update(payment_reference=self.payment_reference)
 
     def __str__(self) -> str:

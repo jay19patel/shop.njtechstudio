@@ -3,8 +3,8 @@ import logging
 
 from rest_framework import permissions, viewsets
 
-from ..models import Address, Contact, Testimonial
-from ..serializers import AddressSerializer, ContactSerializer, TestimonialSerializer
+from ..models import Address, Contact, Testimonial, FAQ
+from ..serializers import AddressSerializer, ContactSerializer, TestimonialSerializer, FAQSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -40,4 +40,12 @@ class TestimonialViewSet(viewsets.ReadOnlyModelViewSet):
 
     queryset           = Testimonial.objects.filter(is_active=True).order_by('-created_at')
     serializer_class   = TestimonialSerializer
+    permission_classes = [permissions.AllowAny]
+
+
+class FAQViewSet(viewsets.ReadOnlyModelViewSet):
+    """Public read-only listing of active FAQs."""
+
+    queryset           = FAQ.objects.filter(is_active=True).order_by('order', '-created_at')
+    serializer_class   = FAQSerializer
     permission_classes = [permissions.AllowAny]

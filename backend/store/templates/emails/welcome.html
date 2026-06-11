@@ -1,7 +1,7 @@
 {% extends "emails/base.html" %}
-{% block title %}Welcome to Soul Craft Studio{% endblock %}
+{% block title %}Welcome to NJShop{% endblock %}
 {% block content %}
-<h1>Welcome to Soul Craft Studio.</h1>
+<h1>Welcome to NJShop.</h1>
 <p class="lead">Hello <strong>{{ user_name }}</strong>, your account is ready. You can shop, check your orders and download invoices in one place.</p>
 <div class="button-wrap"><a class="button" href="{{ frontend_url }}/shop">Start shopping</a></div>
 <p class="title">Account details</p>
@@ -12,4 +12,4 @@
 </table>
 <p class="notice">When you place an order, we will send its PDF invoice with the confirmation email and notify you about later updates.</p>
 {% endblock %}
-{% block footer %}Sent to {{ user_email }} because you created a Soul Craft Studio account.<br>{% endblock %}
+{% block footer %}Sent to {{ user_email }} because you created an NJShop account.<br>{% endblock %}

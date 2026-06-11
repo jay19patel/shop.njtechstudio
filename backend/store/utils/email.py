@@ -13,7 +13,7 @@ from ..models import EmailLog
 logger = logging.getLogger(__name__)
 
 FRONTEND_URL = getattr(settings, 'FRONTEND_URL', 'http://localhost:3000')
-BRAND_NAME = "Soul Craft Studio"
+BRAND_NAME = "NJShop"
 
 
 # ── Core sender ───────────────────────────────────────────────────────────────
@@ -65,7 +65,7 @@ def _invoice_attachment(order) -> list | None:
     """Build the invoice attachment included only with order confirmation."""
     try:
         from .pdf import generate_invoice_pdf
-        return [(f"Soul-Craft-Studio-Invoice-{order.id}.pdf", generate_invoice_pdf(order), "application/pdf")]
+        return [(f"NJShop-Invoice-{order.id}.pdf", generate_invoice_pdf(order), "application/pdf")]
     except Exception as exc:
         logger.exception("invoice_pdf_failed", extra={"order_id": order.id, "error": str(exc)})
         return None

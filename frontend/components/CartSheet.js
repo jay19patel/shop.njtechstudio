@@ -47,7 +47,7 @@ const CartSheet = () => {
                                 <div className="p-2 bg-blue-50 text-blue-600 rounded-xl">
                                     <ShoppingBag className="w-5 h-5" />
                                 </div>
-                                <h2 className="text-lg md:text-xl font-[family-name:var(--font-climate-crisis)] uppercase text-blue-950">
+                                <h2 className="text-lg md:text-xl font-extrabold tracking-tight uppercase text-blue-950">
                                     Your Cart
                                 </h2>
                             </div>
@@ -88,7 +88,7 @@ const CartSheet = () => {
                                             {/* Info */}
                                             <div className="flex-grow flex flex-col gap-2 md:gap-3 py-0.5">
                                                 <div className="flex flex-col gap-0.5">
-                                                    <h3 className="text-[11px] md:text-[13px] font-[family-name:var(--font-climate-crisis)] uppercase text-blue-950 leading-tight">
+                                                    <h3 className="text-[11px] md:text-[13px] font-extrabold tracking-tight uppercase text-blue-950 leading-tight">
                                                         {item.name}
                                                     </h3>
                                                     <span className="text-xs md:text-sm font-black text-blue-600">₹{item.price}</span>

@@ -53,7 +53,7 @@ const ContactForm = () => {
                         id="name"
                         value={formData.name}
                         onChange={handleChange}
-                        placeholder="Khusi Patel"
+                        placeholder="Your Name"
                         className="px-6 py-4 rounded-3xl bg-slate-50 border border-slate-100 focus:border-orange-400 focus:outline-none focus:ring-4 focus:ring-orange-100 transition-all font-medium"
                         required
                     />
@@ -65,7 +65,7 @@ const ContactForm = () => {
                         id="email"
                         value={formData.email}
                         onChange={handleChange}
-                        placeholder="Khushipatelpatel112@gmail.com"
+                        placeholder="contact@njtechstudio.in"
                         className="px-6 py-4 rounded-3xl bg-slate-50 border border-slate-100 focus:border-orange-400 focus:outline-none focus:ring-4 focus:ring-orange-100 transition-all font-medium"
                         required
                     />

@@ -28,3 +28,19 @@ class ContactMessage(models.Model):
 
     def __str__(self) -> str:
         return f"Message from {self.name} — {self.subject}"
+
+
+class FAQ(models.Model):
+    """Frequently Asked Questions."""
+
+    question   = models.CharField(max_length=500)
+    answer     = models.TextField()
+    is_active  = models.BooleanField(default=True)
+    order      = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['order', '-created_at']
+
+    def __str__(self) -> str:
+        return self.question

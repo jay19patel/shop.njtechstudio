@@ -64,11 +64,11 @@ const CheckoutPage = () => {
   // Loading state
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col">
+      <div className="min-h-screen bg-white flex flex-col">
         <Navbar />
         <main className="flex-grow flex items-center justify-center">
           <div className="flex flex-col items-center gap-4">
-            <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
+            <Loader2 className="w-10 h-10 text-slate-900 animate-spin" />
             <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">Verifying Session...</p>
           </div>
         </main>
@@ -188,13 +188,13 @@ const CheckoutPage = () => {
   // Empty cart guard
   if (cart.length === 0) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col">
+      <div className="min-h-screen bg-white flex flex-col">
         <Navbar />
         <main className="flex-grow flex flex-col items-center justify-center p-6 text-center gap-6">
           <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-sm">
             <ChevronLeft className="w-10 h-10 text-slate-300" />
           </div>
-          <h1 className="text-3xl font-[family-name:var(--font-climate-crisis)] uppercase text-blue-950">
+          <h1 className="text-3xl font-extrabold tracking-tight uppercase text-blue-950">
             Your cart is empty
           </h1>
           <p className="text-slate-500 max-w-sm">
@@ -202,7 +202,7 @@ const CheckoutPage = () => {
           </p>
           <Link
             href="/shop"
-            className="bg-blue-600 text-white px-8 py-3 rounded-full font-black uppercase tracking-widest text-sm shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all"
+            className="bg-slate-900 text-white px-8 py-3 rounded-full font-black uppercase tracking-widest text-sm shadow-xl shadow-blue-100 hover:bg-slate-900/90 transition-all"
           >
             Browse Shop
           </Link>
@@ -213,34 +213,34 @@ const CheckoutPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900">
+    <div className="min-h-screen bg-white flex flex-col font-sans text-slate-900">
       <Navbar />
 
       <main className="flex-grow w-full max-w-7xl mx-auto px-4 py-12 md:py-20">
         <div className="flex flex-col gap-8">
           <button
             onClick={() => step === 'payment' ? setStep('shipping') : router.push('/shop')}
-            className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-orange-500 w-fit transition-colors"
+            className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 w-fit transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
             {step === 'payment' ? 'Back to Shipping' : 'Back to Shop'}
           </button>
 
-          <h1 className="text-4xl md:text-5xl font-[family-name:var(--font-climate-crisis)] uppercase text-blue-950">
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight uppercase text-blue-950">
             {step === 'shipping' ? 'Checkout.' : 'Payment.'}
           </h1>
 
           {/* Step indicator */}
           <div className="flex items-center gap-3">
-            <div className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest ${step === 'shipping' ? 'text-blue-600' : 'text-green-500'}`}>
-              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-black ${step === 'shipping' ? 'bg-blue-600' : 'bg-green-500'}`}>
+            <div className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest ${step === 'shipping' ? 'text-slate-900' : 'text-green-500'}`}>
+              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-black ${step === 'shipping' ? 'bg-slate-900' : 'bg-green-500'}`}>
                 {step === 'shipping' ? '1' : '✓'}
               </div>
               Shipping
             </div>
-            <div className="w-8 h-px bg-slate-200" />
-            <div className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest ${step === 'payment' ? 'text-blue-600' : 'text-slate-300'}`}>
-              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-black ${step === 'payment' ? 'bg-blue-600' : 'bg-slate-200'}`}>
+            <div className="w-8 h-px bg-slate-100" />
+            <div className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest ${step === 'payment' ? 'text-slate-900' : 'text-slate-300'}`}>
+              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-black ${step === 'payment' ? 'bg-slate-900' : 'bg-slate-100'}`}>
                 2
               </div>
               Payment
@@ -271,8 +271,8 @@ const CheckoutPage = () => {
                           name="fullName"
                           value={formData.fullName}
                           onChange={handleInputChange}
-                          placeholder="Khushi Patel"
-                          className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                          placeholder="NJ Customer"
+                          className="w-full bg-white border border-slate-100 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/20 focus:border-blue-500 transition-all"
                         />
                       </div>
                       <div className="flex flex-col gap-2">
@@ -283,8 +283,8 @@ const CheckoutPage = () => {
                           name="email"
                           value={formData.email}
                           onChange={handleInputChange}
-                          placeholder="khushi@example.com"
-                          className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                          placeholder="customer@example.com"
+                          className="w-full bg-white border border-slate-100 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/20 focus:border-blue-500 transition-all"
                         />
                       </div>
                       <div className="flex flex-col gap-2">
@@ -297,7 +297,7 @@ const CheckoutPage = () => {
                           value={formData.phone}
                           onChange={handleInputChange}
                           placeholder="+91 98765 43210"
-                          className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                          className="w-full bg-white border border-slate-100 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/20 focus:border-blue-500 transition-all"
                         />
                       </div>
                       <div className="flex flex-col gap-2">
@@ -308,7 +308,7 @@ const CheckoutPage = () => {
                           value={formData.city}
                           onChange={handleInputChange}
                           placeholder="Surat"
-                          className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                          className="w-full bg-white border border-slate-100 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/20 focus:border-blue-500 transition-all"
                         />
                       </div>
                       <div className="flex flex-col gap-2 md:col-span-2">
@@ -320,7 +320,7 @@ const CheckoutPage = () => {
                           onChange={handleInputChange}
                           placeholder="Street, Landmark, Apartment No."
                           rows={3}
-                          className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none"
+                          className="w-full bg-white border border-slate-100 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/20 focus:border-blue-500 transition-all resize-none"
                         />
                       </div>
                       <div className="flex flex-col gap-2">
@@ -331,7 +331,7 @@ const CheckoutPage = () => {
                           value={formData.state}
                           onChange={handleInputChange}
                           placeholder="Gujarat"
-                          className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                          className="w-full bg-white border border-slate-100 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/20 focus:border-blue-500 transition-all"
                         />
                       </div>
                       <div className="flex flex-col gap-2">
@@ -342,7 +342,7 @@ const CheckoutPage = () => {
                           value={formData.pincode}
                           onChange={handleInputChange}
                           placeholder="395001"
-                          className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                          className="w-full bg-white border border-slate-100 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/20 focus:border-blue-500 transition-all"
                         />
                       </div>
                     </div>
@@ -350,7 +350,7 @@ const CheckoutPage = () => {
 
                   <button
                     type="submit"
-                    className="w-full bg-blue-600 text-white py-6 rounded-[24px] font-black uppercase tracking-[0.2em] text-sm shadow-2xl shadow-blue-200 hover:bg-blue-700 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3"
+                    className="w-full bg-slate-900 text-white py-6 rounded-[24px] font-black uppercase tracking-[0.2em] text-sm shadow-2xl shadow-blue-200 hover:bg-slate-900/90 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3"
                   >
                     Proceed to Payment
                   </button>
@@ -360,21 +360,21 @@ const CheckoutPage = () => {
                 <form onSubmit={handleSubmit} className="flex flex-col gap-8">
                   <div className="bg-white rounded-[32px] p-8 md:p-10 border border-slate-100 shadow-sm flex flex-col gap-10">
                     <div className="flex flex-col items-center gap-4 text-center">
-                      <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-2">
+                      <div className="w-16 h-16 bg-blue-50 text-slate-900 rounded-full flex items-center justify-center mb-2">
                         <CreditCard className="w-8 h-8" />
                       </div>
-                      <h2 className="text-3xl font-[family-name:var(--font-climate-crisis)] uppercase text-blue-950">
+                      <h2 className="text-3xl font-extrabold tracking-tight uppercase text-blue-950">
                         Scan &amp; Pay
                       </h2>
                       <p className="text-sm font-bold text-slate-500 uppercase tracking-widest max-w-sm">
-                        Please pay <span className="text-blue-600 font-black">₹{cartTotal.toLocaleString('en-IN')}</span> using any UPI app to confirm your order.
+                        Please pay <span className="text-slate-900 font-black">₹{cartTotal.toLocaleString('en-IN')}</span> using any UPI app to confirm your order.
                       </p>
                     </div>
 
-                    <div className="flex flex-col md:flex-row gap-10 items-stretch bg-slate-50 p-6 md:p-8 rounded-[32px] border border-slate-100">
+                    <div className="flex flex-col md:flex-row gap-10 items-stretch bg-white p-6 md:p-8 rounded-[32px] border border-slate-100">
                       {/* QR Code Section */}
                       <div className="flex-1 flex flex-col items-center justify-center gap-6">
-                        <div className="w-56 h-56 bg-white rounded-3xl shadow-md border border-slate-200 overflow-hidden flex items-center justify-center p-4 relative group">
+                        <div className="w-56 h-56 bg-white rounded-3xl shadow-md border border-slate-100 overflow-hidden flex items-center justify-center p-4 relative group">
                           <img
                             src="/images/qr-dummy.png"
                             alt="Payment QR Code"
@@ -405,8 +405,8 @@ const CheckoutPage = () => {
                         </div>
                       </div>
 
-                      <div className="w-px bg-slate-200 hidden md:block" />
-                      <div className="h-px bg-slate-200 md:hidden w-full" />
+                      <div className="w-px bg-slate-100 hidden md:block" />
+                      <div className="h-px bg-slate-100 md:hidden w-full" />
 
                       {/* Input Section */}
                       <div className="flex-1 flex flex-col justify-center gap-6">
@@ -420,7 +420,7 @@ const CheckoutPage = () => {
                             value={paymentData.upiTransactionId}
                             onChange={handlePaymentChange}
                             placeholder="e.g., 123456789012"
-                            className="w-full bg-white border border-slate-200 rounded-2xl px-5 py-4 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:font-normal placeholder:text-slate-400"
+                            className="w-full bg-white border border-slate-100 rounded-2xl px-5 py-4 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-slate-900/20 focus:border-blue-500 transition-all placeholder:font-normal placeholder:text-slate-400"
                           />
                         </div>
 
@@ -429,7 +429,7 @@ const CheckoutPage = () => {
                             <label className="text-[10px] font-black uppercase tracking-widest text-blue-950">
                               Step 2: Upload Screenshot
                             </label>
-                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 px-2 py-0.5 rounded-full">Optional</span>
+                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 px-2 py-0.5 rounded-full">Optional</span>
                           </div>
                           
                           <div className="relative group cursor-pointer mt-1">
@@ -446,22 +446,22 @@ const CheckoutPage = () => {
                                   <img src={screenshotPreview} alt="Preview" className="w-full h-full object-cover" />
                                 </div>
                                 <div className="flex-grow flex flex-col items-start gap-1 overflow-hidden">
-                                  <span className="text-[10px] font-black uppercase tracking-widest text-blue-600">Screenshot Attached</span>
+                                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-900">Screenshot Attached</span>
                                   <span className="text-[10px] font-medium text-slate-500 truncate w-full">{screenshotFile?.name}</span>
                                 </div>
                                 <button
                                   type="button"
                                   onClick={(e) => { e.preventDefault(); clearScreenshot(); }}
-                                  className="p-2.5 bg-slate-50 hover:bg-red-50 text-slate-400 hover:text-red-500 rounded-xl transition-colors z-20"
+                                  className="p-2.5 bg-white hover:bg-red-50 text-slate-400 hover:text-red-500 rounded-xl transition-colors z-20"
                                 >
                                   <X className="w-4 h-4" />
                                 </button>
                               </div>
                             ) : (
-                              <div className="w-full bg-white border border-dashed border-slate-300 rounded-2xl px-5 py-6 text-center transition-all group-hover:border-blue-400 group-hover:bg-blue-50 flex flex-col items-center gap-2">
+                              <div className="w-full bg-white border border-dashed border-slate-200 rounded-2xl px-5 py-6 text-center transition-all group-hover:border-blue-400 group-hover:bg-blue-50 flex flex-col items-center gap-2">
                                 <ImageIcon className="w-6 h-6 text-slate-300 group-hover:text-blue-500 transition-colors" />
                                 <div className="flex flex-col">
-                                  <span className="text-xs font-black text-slate-500 group-hover:text-blue-600 uppercase tracking-widest transition-colors">
+                                  <span className="text-xs font-black text-slate-500 group-hover:text-slate-900 uppercase tracking-widest transition-colors">
                                     Select Image
                                   </span>
                                   <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">
@@ -475,8 +475,8 @@ const CheckoutPage = () => {
                       </div>
                     </div>
 
-                    <div className="bg-orange-50/50 p-5 rounded-2xl border border-orange-100 flex items-center gap-4">
-                      <ShieldCheck className="w-8 h-8 text-orange-500 flex-shrink-0" />
+                    <div className="bg-slate-100/50 p-5 rounded-2xl border border-orange-100 flex items-center gap-4">
+                      <ShieldCheck className="w-8 h-8 text-slate-900 flex-shrink-0" />
                       <p className="text-xs font-bold text-orange-900 leading-relaxed">
                         Your payment will be manually verified by our team. Please ensure you pay the exact amount of <span className="font-black text-orange-600 tracking-wider">₹{cartTotal.toLocaleString('en-IN')}</span> for faster processing.
                       </p>
@@ -492,7 +492,7 @@ const CheckoutPage = () => {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-blue-600 text-white py-6 rounded-[24px] font-black uppercase tracking-[0.2em] text-sm shadow-2xl shadow-blue-200 hover:bg-blue-700 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-3"
+                    className="w-full bg-slate-900 text-white py-6 rounded-[24px] font-black uppercase tracking-[0.2em] text-sm shadow-2xl shadow-blue-200 hover:bg-slate-900/90 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-3"
                   >
                     {isSubmitting ? (
                       <>
@@ -517,11 +517,11 @@ const CheckoutPage = () => {
                 <div className="flex flex-col gap-6 max-h-[300px] overflow-y-auto pr-2 mb-8">
                   {cart.map((item) => (
                     <div key={item.id} className="flex gap-4">
-                      <div className="w-16 h-16 rounded-xl bg-slate-50 border border-slate-100 overflow-hidden flex-shrink-0">
+                      <div className="w-16 h-16 rounded-xl bg-white border border-slate-100 overflow-hidden flex-shrink-0">
                         {item.image ? (
                           <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                         ) : (
-                          <div className="w-full h-full bg-slate-100 flex items-center justify-center">
+                          <div className="w-full h-full bg-slate-50 flex items-center justify-center">
                             <svg className="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
@@ -549,13 +549,13 @@ const CheckoutPage = () => {
                   </div>
                   <div className="flex justify-between text-base pt-4 border-t border-slate-50 mt-2">
                     <span className="text-blue-950 font-black uppercase tracking-tight">Total Amount</span>
-                    <span className="font-black text-blue-600">₹{cartTotal.toLocaleString('en-IN')}</span>
+                    <span className="font-black text-slate-900">₹{cartTotal.toLocaleString('en-IN')}</span>
                   </div>
                 </div>
 
-                <div className="mt-8 flex flex-col gap-4 bg-orange-50/50 p-6 rounded-2xl border border-orange-100">
+                <div className="mt-8 flex flex-col gap-4 bg-slate-100/50 p-6 rounded-2xl border border-orange-100">
                   <div className="flex gap-3 items-center">
-                    <ShieldCheck className="w-5 h-5 text-orange-500" />
+                    <ShieldCheck className="w-5 h-5 text-slate-900" />
                     <span className="text-[10px] font-black uppercase tracking-widest text-orange-900 leading-tight">
                       Secure Transaction Guaranteed
                     </span>

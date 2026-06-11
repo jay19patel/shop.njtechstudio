@@ -20,6 +20,7 @@ from .misc  import (
     AddressSerializer,
     ContactSerializer,
     ContactMessageSerializer,
+    FAQSerializer,
 )
 
 __all__ = [
@@ -35,4 +36,5 @@ __all__ = [
     "AddressSerializer",
     "ContactSerializer",
     "ContactMessageSerializer",
+    "FAQSerializer",
 ]

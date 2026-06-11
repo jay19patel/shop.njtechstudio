@@ -1,4 +1,4 @@
-import { Geist, Climate_Crisis } from "next/font/google";
+import { Geist } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "../context/CartContext";
 import { GoogleOAuthProvider } from "@react-oauth/google";
@@ -8,14 +8,11 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-const climateCrisis = Climate_Crisis({
-  variable: "--font-climate-crisis",
-  subsets: ["latin"],
-});
+
 
 export const metadata = {
-  title: "Soul Craft Studio | Handcrafted Wool Art",
-  description: "Discover our exclusive collection of handcrafted wool art, decorations, and unique keychains that tell a story.",
+  title: "NJShop | Premium E-commerce Store",
+  description: "Discover our premium collection of accessories, home decor, and curated designs at NJShop.",
   icons: {
     icon: '/favicon.ico',
   },
@@ -27,7 +24,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${climateCrisis.variable} h-full antialiased`}
+      className={`${geistSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "your_google_client_id_here.apps.googleusercontent.com"}>

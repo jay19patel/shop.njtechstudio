@@ -69,7 +69,7 @@ export default function AdminDashboardPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900">
+      <div className="min-h-screen bg-white flex flex-col font-sans text-slate-900">
         <Navbar />
         <main className="flex-grow flex items-center justify-center">
           <Loader2 className="w-10 h-10 text-indigo-600 animate-spin" />
@@ -87,7 +87,7 @@ export default function AdminDashboardPage() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900">
+    <div className="min-h-screen bg-white flex flex-col font-sans text-slate-900">
       <Navbar />
 
       <main className="flex-grow w-full max-w-7xl mx-auto px-4 py-12 md:py-20">
@@ -99,7 +99,7 @@ export default function AdminDashboardPage() {
                 <ChevronLeft className="w-4 h-4" />
                 Back to Profile
               </Link>
-              <h1 className="text-4xl md:text-5xl font-[family-name:var(--font-climate-crisis)] uppercase text-slate-900">
+              <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight uppercase text-slate-900">
                 Admin <span className="text-indigo-600">Dashboard.</span>
               </h1>
             </div>
@@ -127,7 +127,7 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
               <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col gap-4">
-                <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-blue-50 text-slate-900 rounded-2xl flex items-center justify-center">
                   <ShoppingBag className="w-6 h-6" />
                 </div>
                 <div className="flex flex-col">
@@ -135,7 +135,7 @@ export default function AdminDashboardPage() {
                   <span className="text-2xl md:text-3xl font-black text-slate-900">{stats.total_orders}</span>
                 </div>
               </div>
-              <div className="bg-white p-6 rounded-3xl border border-orange-100 bg-orange-50/30 shadow-sm flex flex-col gap-4 relative overflow-hidden">
+              <div className="bg-white p-6 rounded-3xl border border-orange-100 bg-slate-100/30 shadow-sm flex flex-col gap-4 relative overflow-hidden">
                 <div className="w-12 h-12 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center relative z-10">
                   <Clock className="w-6 h-6" />
                 </div>
@@ -144,7 +144,7 @@ export default function AdminDashboardPage() {
                   <span className="text-2xl md:text-3xl font-black text-orange-600">{stats.pending_orders}</span>
                 </div>
                 {stats.pending_orders > 0 && (
-                   <div className="absolute -right-4 -top-4 w-24 h-24 bg-orange-500 rounded-full blur-3xl opacity-20"></div>
+                   <div className="absolute -right-4 -top-4 w-24 h-24 bg-slate-1000 rounded-full blur-3xl opacity-20"></div>
                 )}
               </div>
               <Link href="/admin/products" className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col gap-4 hover:shadow-md hover:border-indigo-100 transition-all group">
@@ -157,7 +157,7 @@ export default function AdminDashboardPage() {
                 </div>
               </Link>
               <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col gap-4">
-                <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-blue-50 text-slate-900 rounded-2xl flex items-center justify-center">
                   <Mail className="w-6 h-6" />
                 </div>
                 <div className="flex flex-col">
@@ -165,7 +165,7 @@ export default function AdminDashboardPage() {
                   <span className="text-2xl md:text-3xl font-black text-slate-900">{stats.total_messages || 0}</span>
                   <div className="flex items-center gap-3 mt-2">
                     <span className="text-[10px] font-bold text-indigo-500 bg-indigo-50 px-2 py-1 rounded-md uppercase tracking-wider">Unread: {stats.unread_messages || 0}</span>
-                    <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded-md uppercase tracking-wider">Read: {stats.read_messages || 0}</span>
+                    <span className="text-[10px] font-bold text-slate-500 bg-slate-50 px-2 py-1 rounded-md uppercase tracking-wider">Read: {stats.read_messages || 0}</span>
                   </div>
                 </div>
               </div>
@@ -177,7 +177,7 @@ export default function AdminDashboardPage() {
             <Link href="/admin/products" className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm uppercase tracking-widest rounded-full shadow-lg shadow-indigo-200 transition-all flex items-center gap-2">
               <Package className="w-4 h-4" /> Manage Products
             </Link>
-            <Link href="/admin/messages" className="px-6 py-3 bg-slate-800 hover:bg-slate-900 text-white font-bold text-sm uppercase tracking-widest rounded-full shadow-lg shadow-slate-200 transition-all flex items-center gap-2">
+            <Link href="/admin/messages" className="px-6 py-3 bg-slate-800 hover:bg-slate-900 text-white font-bold text-sm uppercase tracking-widest rounded-full shadow-lg shadow-slate-200/30 transition-all flex items-center gap-2">
               <Mail className="w-4 h-4" /> View Inbox
             </Link>
           </div>
@@ -185,10 +185,10 @@ export default function AdminDashboardPage() {
 
 
           {/* Orders Section */}
-          <div className="bg-white rounded-[40px] border border-slate-100 shadow-xl shadow-slate-200/40 p-6 md:p-10 flex flex-col gap-8">
+          <div className="bg-white rounded-[40px] border border-slate-100 shadow-xl shadow-slate-200/30/40 p-6 md:p-10 flex flex-col gap-8">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <h2 className="text-xl font-black uppercase tracking-tight text-slate-900 flex items-center gap-3">
-                Recent Orders <span className="bg-slate-100 text-slate-500 text-xs px-3 py-1 rounded-full">{orders.length}</span>
+                Recent Orders <span className="bg-slate-50 text-slate-500 text-xs px-3 py-1 rounded-full">{orders.length}</span>
               </h2>
               <div className="relative w-full md:w-72">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -197,7 +197,7 @@ export default function AdminDashboardPage() {
                   placeholder="Search orders..." 
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full bg-slate-50 border-none rounded-2xl py-3 pl-10 pr-4 text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+                  className="w-full bg-white border-none rounded-2xl py-3 pl-10 pr-4 text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
                 />
               </div>
             </div>
@@ -220,7 +220,7 @@ export default function AdminDashboardPage() {
                       <td colSpan="6" className="py-8 text-center text-slate-500 text-sm">No orders found.</td>
                     </tr>
                   ) : filteredOrders.map((order) => (
-                    <tr key={order.id} className="hover:bg-slate-50/50 transition-colors group">
+                    <tr key={order.id} className="hover:bg-slate-500 transition-colors group">
                       <td className="py-6 pl-4 pr-4 align-top">
                         <div className="flex flex-col gap-1">
                           <Link href={`/orders/${order.id}`} className="font-black text-sm text-indigo-600 hover:text-indigo-800 transition-colors flex items-center gap-1 group-hover:underline w-fit">
@@ -245,7 +245,7 @@ export default function AdminDashboardPage() {
                           {order.payment_reference && (
                             <div className="flex items-center gap-2 text-xs">
                               <span className="font-black text-slate-400 uppercase tracking-widest text-[9px]">Ref:</span>
-                              <span className="font-mono text-slate-700 bg-slate-100 px-2 py-0.5 rounded">{order.payment_reference}</span>
+                              <span className="font-mono text-slate-600 bg-slate-50 px-2 py-0.5 rounded">{order.payment_reference}</span>
                             </div>
                           )}
                           <span className="text-xs text-slate-500 font-mono">{order.upi_transaction_id || 'No UPI Transaction ID'}</span>
@@ -265,7 +265,7 @@ export default function AdminDashboardPage() {
                           disabled={updating === order.id}
                           className={`text-xs font-bold uppercase tracking-wider rounded-xl px-3 py-2 border-2 outline-none appearance-none cursor-pointer transition-colors ${
                             order.payment_status === 'VERIFIED' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' :
-                            order.payment_status === 'PENDING' ? 'bg-orange-50 text-orange-700 border-orange-100' :
+                            order.payment_status === 'PENDING' ? 'bg-slate-100 text-orange-700 border-orange-100' :
                             order.payment_status === 'FAILED' ? 'bg-red-50 text-red-700 border-red-100' :
                             'bg-blue-50 text-blue-700 border-blue-100'
                           }`}
@@ -283,7 +283,7 @@ export default function AdminDashboardPage() {
                           disabled={updating === order.id}
                           className={`text-xs font-bold uppercase tracking-wider rounded-xl px-3 py-2 border-2 outline-none appearance-none cursor-pointer transition-colors ${
                             order.status === 'DELIVERED' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' :
-                            order.status === 'PENDING' ? 'bg-slate-100 text-slate-700 border-slate-200' :
+                            order.status === 'PENDING' ? 'bg-slate-50 text-slate-600 border-slate-100' :
                             order.status === 'CANCELLED' ? 'bg-red-50 text-red-700 border-red-100' :
                             'bg-indigo-50 text-indigo-700 border-indigo-100'
                           }`}

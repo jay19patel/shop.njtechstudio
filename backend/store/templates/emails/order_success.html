@@ -1,5 +1,5 @@
 {% extends "emails/base.html" %}
-{% block title %}Order confirmed | Soul Craft Studio{% endblock %}
+{% block title %}Order confirmed | NJShop{% endblock %}
 {% block content %}
 <h1>Your order is confirmed.</h1>
 <p class="lead">
@@ -10,7 +10,7 @@
 
 <p class="title">Order details</p>
 <table role="presentation" class="panel">
-  <tr class="row"><td class="label">Invoice number</td><td class="value">SCS-{{ order.id }}</td></tr>
+  <tr class="row"><td class="label">Invoice number</td><td class="value">NJ-{{ order.id }}</td></tr>
   <tr class="row"><td class="label">Invoice date</td><td class="value">{{ order.created_at|date:"M j, Y" }}</td></tr>
 </table>
 

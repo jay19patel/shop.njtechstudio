@@ -13,7 +13,7 @@ from .cart        import Cart, CartItem
 from .order       import Order, OrderItem
 from .payment     import Payment
 from .user_profile import Address, Contact
-from .content     import Testimonial, ContactMessage
+from .content     import Testimonial, ContactMessage, FAQ
 from .email_log   import EmailLog
 
 __all__ = [
@@ -23,7 +23,7 @@ __all__ = [
     "Order", "OrderItem",
     "Payment",
     "Address", "Contact",
-    "Testimonial",
+    "Testimonial", "FAQ",
     "ContactMessage",
     "EmailLog",
 ]

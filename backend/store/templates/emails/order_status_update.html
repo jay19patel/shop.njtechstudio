@@ -1,5 +1,5 @@
 {% extends "emails/base.html" %}
-{% block title %}Order update | Soul Craft Studio{% endblock %}
+{% block title %}Order update | NJShop{% endblock %}
 {% block content %}
 <h1>{{ headline }}</h1>
 <p class="lead">Hi <strong>{{ order.customer_name|default:order.user.username }}</strong>, {{ message }}</p>
