@@ -15,12 +15,10 @@ export default function AdminDashboardPage() {
 
   const [stats, setStats] = useState(null);
   const [orders, setOrders] = useState([]);
-  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [updating, setUpdating] = useState(null);
-  const [showUsersModal, setShowUsersModal] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) router.push('/login');
@@ -41,27 +39,6 @@ export default function AdminDashboardPage() {
       setError('Failed to load admin data');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const fetchUsers = async () => {
-    try {
-      const response = await fetch('/api/auth/me', {
-        headers: {
-          'Authorization': `Bearer ${typeof window !== 'undefined' ? localStorage.getItem('auth_token') : ''}`
-        }
-      });
-      if (!response.ok) throw new Error('Failed to fetch');
-      // Fetch all users from Django admin endpoint
-      const res = await fetch('/api/admin/users/', {
-        headers: {
-          'Authorization': `Bearer ${typeof window !== 'undefined' ? localStorage.getItem('auth_token') : ''}`
-        }
-      });
-      const data = await res.json();
-      setUsers(data.results || data || []);
-    } catch (err) {
-      console.error(err);
     }
   };
 
@@ -123,9 +100,9 @@ export default function AdminDashboardPage() {
               <Link href="/admin/products" className="px-4 py-2 bg-slate-900 text-white text-xs font-bold uppercase tracking-wider rounded-lg hover:bg-slate-800 transition-colors flex items-center gap-2">
                 <Package className="w-3.5 h-3.5" /> Products
               </Link>
-              <button onClick={() => { setShowUsersModal(true); fetchUsers(); }} className="px-4 py-2 bg-white border border-slate-200 text-slate-700 text-xs font-bold uppercase tracking-wider rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2">
-                <Users className="w-3.5 h-3.5" /> Users
-              </button>
+              <Link href="/admin/customer" className="px-4 py-2 bg-white border border-slate-200 text-slate-700 text-xs font-bold uppercase tracking-wider rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2">
+                <Users className="w-3.5 h-3.5" /> Customers
+              </Link>
               <Link href="/admin/messages" className="px-4 py-2 bg-white border border-slate-200 text-slate-700 text-xs font-bold uppercase tracking-wider rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2">
                 <Mail className="w-3.5 h-3.5" /> Inbox
                 {(stats?.unread_messages || 0) > 0 && (
@@ -295,60 +272,6 @@ export default function AdminDashboardPage() {
 
       <Footer />
 
-      {/* Users Modal */}
-      {showUsersModal && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={(e) => e.target === e.currentTarget && setShowUsersModal(false)}>
-          <div className="bg-white rounded-xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]">
-            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
-              <h3 className="text-base font-bold text-slate-900">All Users ({users.length})</h3>
-              <button onClick={() => setShowUsersModal(false)} className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-6">
-              {users.length === 0 ? (
-                <div className="text-center py-8 text-slate-400">
-                  <Users className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                  <p>No users found</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {users.map((user) => (
-                    <div key={user.id || user.pk} className="border border-slate-200 rounded-lg p-4 hover:bg-slate-50 transition-colors">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h4 className="font-semibold text-slate-900">{user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : user.username}</h4>
-                          <p className="text-xs text-slate-500 mt-1">{user.email}</p>
-                          <div className="mt-2 flex items-center gap-2">
-                            {user.is_superuser && (
-                              <span className="text-[9px] font-bold uppercase tracking-widest bg-slate-900 text-white px-2 py-0.5 rounded-full">Admin</span>
-                            )}
-                            {user.is_staff && !user.is_superuser && (
-                              <span className="text-[9px] font-bold uppercase tracking-widest bg-slate-400 text-white px-2 py-0.5 rounded-full">Staff</span>
-                            )}
-                            {!user.is_superuser && !user.is_staff && (
-                              <span className="text-[9px] font-bold uppercase tracking-widest bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full">User</span>
-                            )}
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-[10px] text-slate-400">ID: {user.id || user.pk}</p>
-                          {user.date_joined && (
-                            <p className="text-[10px] text-slate-400 mt-1">Joined: {new Date(user.date_joined).toLocaleDateString('en-IN')}</p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
