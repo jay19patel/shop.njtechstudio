@@ -34,33 +34,6 @@ services:
       retries: 10
     restart: unless-stopped
 
-  # Celery Worker (runs background tasks)
-  celery-worker:
-    build:
-      context: .
-      dockerfile: Dockerfile.celery
-    image: khusi-celery:latest
-    container_name: khusi_celery_worker
-    command: celery -A ecommerce worker --loglevel=info
-    env_file:
-      - .env
-    environment:
-      ENVIRONMENT: production
-      DATABASE_URL: postgresql://${POSTGRES_USER:-khusi}:${POSTGRES_PASSWORD:-khusi_password}@localhost:5432/${POSTGRES_DB:-khusi}
-      REDIS_URL: redis://localhost:6379/1
-      CELERY_BROKER_URL: redis://localhost:6379/0
-      CELERY_RESULT_BACKEND: redis://localhost:6379/0
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    volumes:
-      - .:/app
-      - khusi_media:/app/media
-    restart: unless-stopped
-
 volumes:
   khusi_postgres:
   khusi_redis:
-  khusi_media:
