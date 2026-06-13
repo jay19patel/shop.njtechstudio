@@ -22,10 +22,36 @@ class OrderViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         """
         Create an order from a manual checkout payload (not from a cart).
-        Sends order confirmation + PDF invoice email automatically.
+        Validates stock availability, decreases inventory, and sends confirmation email.
         """
         data = request.data
         user = request.user if request.user.is_authenticated else None
+
+        # Validate stock availability before creating order
+        items_to_process = data.get('items', [])
+        for item in items_to_process:
+            product_id = item.get('product_id')
+            qty = item.get('quantity', 1)
+            try:
+                qty = int(qty)
+            except (ValueError, TypeError):
+                return Response(
+                    {'error': f'Invalid quantity for product {product_id}'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            product_obj = Product.objects.filter(id=product_id).first()
+            if not product_obj:
+                return Response(
+                    {'error': f'Product {product_id} not found'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            if product_obj.available_quantity < qty:
+                return Response(
+                    {'error': f'Insufficient stock for {product_obj.name}. Available: {product_obj.available_quantity}, Requested: {qty}'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
 
         valid_statuses = {choice[0] for choice in Order.STATUS_CHOICES}
         valid_payment_statuses = {choice[0] for choice in Order.PAYMENT_STATUS_CHOICES}
@@ -49,19 +75,25 @@ class OrderViewSet(viewsets.ModelViewSet):
             payment_status   = payment_status if payment_status in valid_payment_statuses else 'PENDING',
         )
 
-        # Create order items
-        for item in data.get('items', []):
+        # Create order items and decrease product inventory
+        for item in items_to_process:
             try:
                 product_obj = Product.objects.filter(
                     id=item.get('product_id')
                 ).first()
                 if product_obj:
+                    qty = int(item.get('quantity', 1))
                     OrderItem.objects.create(
                         order    = order,
                         product  = product_obj,
-                        quantity = item.get('quantity', 1),
+                        quantity = qty,
                         price    = item.get('price', 0),
                     )
+                    # Decrease product inventory
+                    product_obj.available_quantity -= qty
+                    product_obj.save()
+                    logger.info("inventory_decreased",
+                               extra={"product_id": product_obj.id, "quantity": qty, "remaining": product_obj.available_quantity})
             except (ValueError, TypeError):
                 logger.warning("order_item_skipped",
                                extra={"order_id": order.id, "item": item})

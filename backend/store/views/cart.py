@@ -28,13 +28,33 @@ class CartViewSet(viewsets.ModelViewSet):
     # ── sync entire cart ──
 
     def update(self, request, *args, **kwargs):
-        """Replace all cart items from a frontend-provided list (full sync)."""
+        """Replace all cart items from a frontend-provided list with stock validation."""
         cart = self.get_object()
 
         # Claim anonymous cart on login
         if request.user.is_authenticated and cart.user is None:
             cart.user = request.user
             cart.save()
+
+        # Validate all items have sufficient stock before syncing
+        for item_data in request.data.get('items', []):
+            product_id = item_data.get('product')
+            quantity = item_data.get('quantity', 1)
+            try:
+                product_obj = Product.objects.filter(id=product_id).first()
+                if not product_obj:
+                    return Response(
+                        {'error': f'Product {product_id} not found'},
+                        status=status.HTTP_404_NOT_FOUND
+                    )
+                if product_obj.available_quantity < quantity:
+                    return Response(
+                        {'error': f'Insufficient stock for {product_obj.name}. Available: {product_obj.available_quantity}, Requested: {quantity}'},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+            except (ValueError, TypeError):
+                logger.warning("cart_sync_bad_product_id",
+                               extra={"product_id": product_id})
 
         cart.items.all().delete()
 
@@ -55,7 +75,7 @@ class CartViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'])
     def add_item(self, request, pk=None):
-        """Increment (or create) a cart item by product_id."""
+        """Increment (or create) a cart item by product_id with stock validation."""
         cart       = self.get_object()
         product_id = request.data.get('product_id')
         quantity   = int(request.data.get('quantity', 1))
@@ -64,11 +84,31 @@ class CartViewSet(viewsets.ModelViewSet):
             return Response({'error': 'product_id is required'},
                             status=status.HTTP_400_BAD_REQUEST)
 
+        # Get product and validate it exists
+        product = Product.objects.filter(id=product_id).first()
+        if not product:
+            return Response({'error': f'Product {product_id} not found'},
+                            status=status.HTTP_404_NOT_FOUND)
+
+        # Check if enough stock is available
+        if product.available_quantity < quantity:
+            return Response(
+                {'error': f'Insufficient stock. Available: {product.available_quantity}, Requested: {quantity}'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         item, created = CartItem.objects.get_or_create(
             cart=cart, product_id=product_id,
             defaults={'quantity': quantity}
         )
         if not created:
+            # Check if adding more would exceed available stock
+            total_qty = item.quantity + quantity
+            if product.available_quantity < total_qty:
+                return Response(
+                    {'error': f'Cannot add {quantity} more. Only {product.available_quantity - item.quantity} left in stock'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
             item.quantity += quantity
             item.save()
 
@@ -78,7 +118,7 @@ class CartViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
     def checkout(self, request, pk=None):
-        """Convert a cart into a confirmed Order."""
+        """Convert a cart into a confirmed Order with inventory management."""
         cart             = self.get_object()
         shipping_address = request.data.get('shipping_address')
 
@@ -90,21 +130,37 @@ class CartViewSet(viewsets.ModelViewSet):
         if not items.exists():
             return Response({'error': 'Cart is empty'}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Validate stock availability for all items
+        for item in items:
+            if item.product.available_quantity < item.quantity:
+                return Response(
+                    {'error': f'Insufficient stock for {item.product.name}. Available: {item.product.available_quantity}, Requested: {item.quantity}'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
         total_amount = sum(item.total_price for item in items)
         order = Order.objects.create(
             user=request.user,
             total_amount=total_amount,
             shipping_address=shipping_address,
         )
-        OrderItem.objects.bulk_create([
-            OrderItem(
+
+        # Create order items and decrease inventory
+        order_items = []
+        for item in items:
+            order_items.append(OrderItem(
                 order=order,
                 product=item.product,
                 quantity=item.quantity,
                 price=item.product.base_price,
-            )
-            for item in items
-        ])
+            ))
+            # Decrease product inventory
+            item.product.available_quantity -= item.quantity
+            item.product.save()
+            logger.info("inventory_decreased",
+                       extra={"product_id": item.product.id, "quantity": item.quantity, "remaining": item.product.available_quantity})
+
+        OrderItem.objects.bulk_create(order_items)
         cart.items.all().delete()
 
         logger.info("cart_checkout_complete",
