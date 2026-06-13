@@ -47,13 +47,13 @@ docker-compose up -d > /dev/null 2>&1
 
 # Wait for services
 echo -e "${YELLOW}⏳ Waiting for PostgreSQL...${NC}"
-until docker exec khusi_postgres pg_isready -U khusi >/dev/null 2>&1; do
+until docker exec store_postgres pg_isready -U njshop >/dev/null 2>&1; do
     sleep 1
 done
 echo -e "${GREEN}✓ PostgreSQL ready${NC}"
 
 echo -e "${YELLOW}⏳ Waiting for Redis...${NC}"
-until docker exec khusi_redis redis-cli ping >/dev/null 2>&1; do
+until docker exec store_redis redis-cli ping >/dev/null 2>&1; do
     sleep 1
 done
 echo -e "${GREEN}✓ Redis ready${NC}"

@@ -2,17 +2,17 @@ services:
   # PostgreSQL Database
   postgres:
     image: postgres:17-alpine
-    container_name: khusi_postgres
+    container_name: store_postgres
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-khusi}
-      POSTGRES_USER: ${POSTGRES_USER:-khusi}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-khusi_password}
+      POSTGRES_DB: ${POSTGRES_DB:-njshop}
+      POSTGRES_USER: ${POSTGRES_USER:-njshop}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-njshop_password}
     ports:
       - "5432:5432"
     volumes:
-      - khusi_postgres:/var/lib/postgresql/data
+      - store_postgres:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-khusi} -d ${POSTGRES_DB:-khusi}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-njshop} -d ${POSTGRES_DB:-njshop}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -21,12 +21,12 @@ services:
   # Redis for Celery & Caching
   redis:
     image: redis:7.4-alpine
-    container_name: khusi_redis
+    container_name: store_redis
     command: redis-server --appendonly yes
     ports:
       - "6379:6379"
     volumes:
-      - khusi_redis:/data
+      - store_redis:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -35,5 +35,5 @@ services:
     restart: unless-stopped
 
 volumes:
-  khusi_postgres:
-  khusi_redis:
+  store_postgres:
+  store_redis:
