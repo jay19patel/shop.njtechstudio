@@ -4,15 +4,15 @@ services:
     image: postgres:17-alpine
     container_name: store_postgres
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-njshop}
-      POSTGRES_USER: ${POSTGRES_USER:-njshop}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-njshop_password}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
       - store_postgres:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-njshop} -d ${POSTGRES_DB:-njshop}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -32,6 +32,21 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+    restart: unless-stopped
+
+  # Celery Flower - Celery Task Monitoring UI
+  celery-flower:
+    image: mher/flower:2.0.1
+    container_name: store_celery_flower
+    command: celery --broker=${CELERY_BROKER_URL} flower --port=5555
+    ports:
+      - "5555:5555"
+    environment:
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND}
+    depends_on:
+      redis:
+        condition: service_healthy
     restart: unless-stopped
 
 volumes:

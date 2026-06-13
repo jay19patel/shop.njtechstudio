@@ -58,6 +58,12 @@ until docker exec store_redis redis-cli ping >/dev/null 2>&1; do
 done
 echo -e "${GREEN}✓ Redis ready${NC}"
 
+echo -e "${YELLOW}⏳ Waiting for Celery Flower...${NC}"
+until curl -s http://localhost:5555 > /dev/null 2>&1; do
+    sleep 1
+done
+echo -e "${GREEN}✓ Celery Flower ready${NC}"
+
 # Migrate
 echo ""
 echo -e "${YELLOW}🗄️  Running migrations...${NC}"
@@ -100,8 +106,11 @@ echo -e "  ${YELLOW}cd frontend && npm run dev${NC}"
 echo ""
 echo -e "${BLUE}🌐 Open in Browser:${NC}"
 echo -e "  ${YELLOW}http://localhost:3000${NC}          (Frontend)"
-echo -e "  ${YELLOW}http://localhost:8000/admin${NC}    (Admin Panel)"
-echo -e "  ${YELLOW}admin / admin123${NC}               (Login)"
+echo -e "  ${YELLOW}http://localhost:8000/admin${NC}    (Admin Panel - admin/admin123)"
+echo -e "  ${YELLOW}http://localhost:5555${NC}          (Celery Flower - Task Monitor)"
+echo ""
+echo -e "${BLUE}📊 Services Status:${NC}"
+docker-compose ps
 echo ""
 echo -e "${BLUE}🛑 Stop Everything:${NC}"
 echo -e "  ${YELLOW}docker-compose down${NC}"
