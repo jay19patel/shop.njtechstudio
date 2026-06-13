@@ -30,47 +30,6 @@ class AdminDashboardStatsView(views.APIView):
             .aggregate(total=Sum('total_amount'))['total'] or 0
         )
 
-        # User stats
-        total_users = User.objects.count()
-        superusers = User.objects.filter(is_superuser=True).count()
-        regular_users = total_users - superusers
-
-        # Last 7 days chart data
-        seven_days_ago = timezone.now() - timedelta(days=7)
-        daily_stats = (
-            Order.objects
-            .filter(created_at__gte=seven_days_ago)
-            .annotate(date=TruncDate('created_at'))
-            .values('date')
-            .annotate(
-                revenue=Sum('total_amount', filter=Q(payment_status='VERIFIED')),
-                orders=Count('id'),
-            )
-            .order_by('date')
-        )
-        chart_data = [
-            {
-                'date':    stat['date'].strftime('%d %b'),
-                'revenue': float(stat['revenue'] or 0),
-                'orders':  stat['orders'],
-            }
-            for stat in daily_stats
-        ]
-
-        # Category sales breakdown
-        from ..models import Category
-        category_sales = (
-            Order.objects
-            .filter(payment_status='VERIFIED')
-            .values('items__product__category__name')
-            .annotate(total=Sum('items__quantity'))
-            .order_by('-total')[:5]
-        )
-        category_data = [
-            {'category': cat['items__product__category__name'] or 'Uncategorized', 'sales': cat['total']}
-            for cat in category_sales
-        ]
-
         total_messages  = ContactMessage.objects.count()
         unread_messages = ContactMessage.objects.filter(is_read=False).count()
         return Response({
@@ -78,11 +37,6 @@ class AdminDashboardStatsView(views.APIView):
             'total_orders':    total_orders,
             'pending_orders':  pending_orders,
             'total_revenue':   float(total_revenue),
-            'total_users':     total_users,
-            'superusers':      superusers,
-            'regular_users':   regular_users,
-            'chart_data':      chart_data,
-            'category_data':   category_data,
             'total_messages':  total_messages,
             'unread_messages': unread_messages,
             'read_messages':   total_messages - unread_messages,
@@ -100,6 +54,21 @@ class AdminCategoryViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         from ..models import Category
         return Category.objects.all().order_by('name')
+
+
+class AdminUsersViewSet(viewsets.ReadOnlyModelViewSet):
+    """Admin read-only view for all users."""
+
+    queryset = User.objects.all().order_by('-date_joined')
+    permission_classes = [permissions.IsAdminUser]
+
+    def get_serializer_class(self):
+        from rest_framework import serializers
+        class UserSerializer(serializers.ModelSerializer):
+            class Meta:
+                model = User
+                fields = ['id', 'username', 'email', 'first_name', 'last_name', 'is_staff', 'is_superuser', 'is_active', 'date_joined']
+        return UserSerializer
 
 
 class ContactMessageViewSet(viewsets.ModelViewSet):

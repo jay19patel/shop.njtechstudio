@@ -10,7 +10,7 @@ from .cart     import CartViewSet
 from .order    import OrderViewSet, AdminOrderViewSet
 from .payment  import PaymentViewSet, UploadScreenshotView
 from .customer import AddressViewSet, ContactViewSet, TestimonialViewSet, FAQViewSet
-from .admin    import AdminDashboardStatsView, ContactMessageViewSet, AdminCategoryViewSet
+from .admin    import AdminDashboardStatsView, ContactMessageViewSet, AdminCategoryViewSet, AdminUsersViewSet
 from .likes    import LikeViewSet
 
 __all__ = [
@@ -20,6 +20,6 @@ __all__ = [
     "OrderViewSet", "AdminOrderViewSet",
     "PaymentViewSet", "UploadScreenshotView",
     "AddressViewSet", "ContactViewSet", "TestimonialViewSet", "FAQViewSet",
-    "AdminDashboardStatsView", "ContactMessageViewSet", "AdminCategoryViewSet",
+    "AdminDashboardStatsView", "ContactMessageViewSet", "AdminCategoryViewSet", "AdminUsersViewSet",
     "LikeViewSet",
 ]

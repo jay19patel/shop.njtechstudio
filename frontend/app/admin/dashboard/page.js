@@ -8,7 +8,6 @@ import { useRouter } from 'next/navigation';
 import { getAdminStats, getAdminOrders, updateAdminOrder } from '../../../lib/api';
 import { Package, ShoppingBag, Banknote, Clock, ChevronLeft, Loader2, Search, ExternalLink, Image as ImageIcon, Mail, FileText, TrendingUp, Users } from 'lucide-react';
 import Link from 'next/link';
-import { LineChart, Line, BarChart, Bar, PieChart, Pie, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export default function AdminDashboardPage() {
   const { user, isAuthenticated, loading: authLoading } = useAuth();
@@ -16,10 +15,12 @@ export default function AdminDashboardPage() {
 
   const [stats, setStats] = useState(null);
   const [orders, setOrders] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [updating, setUpdating] = useState(null);
+  const [showUsersModal, setShowUsersModal] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) router.push('/login');
@@ -40,6 +41,27 @@ export default function AdminDashboardPage() {
       setError('Failed to load admin data');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch('/api/auth/me', {
+        headers: {
+          'Authorization': `Bearer ${typeof window !== 'undefined' ? localStorage.getItem('auth_token') : ''}`
+        }
+      });
+      if (!response.ok) throw new Error('Failed to fetch');
+      // Fetch all users from Django admin endpoint
+      const res = await fetch('/api/admin/users/', {
+        headers: {
+          'Authorization': `Bearer ${typeof window !== 'undefined' ? localStorage.getItem('auth_token') : ''}`
+        }
+      });
+      const data = await res.json();
+      setUsers(data.results || data || []);
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -101,6 +123,9 @@ export default function AdminDashboardPage() {
               <Link href="/admin/products" className="px-4 py-2 bg-slate-900 text-white text-xs font-bold uppercase tracking-wider rounded-lg hover:bg-slate-800 transition-colors flex items-center gap-2">
                 <Package className="w-3.5 h-3.5" /> Products
               </Link>
+              <button onClick={() => { setShowUsersModal(true); fetchUsers(); }} className="px-4 py-2 bg-white border border-slate-200 text-slate-700 text-xs font-bold uppercase tracking-wider rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2">
+                <Users className="w-3.5 h-3.5" /> Users
+              </button>
               <Link href="/admin/messages" className="px-4 py-2 bg-white border border-slate-200 text-slate-700 text-xs font-bold uppercase tracking-wider rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2">
                 <Mail className="w-3.5 h-3.5" /> Inbox
                 {(stats?.unread_messages || 0) > 0 && (
@@ -135,82 +160,6 @@ export default function AdminDashboardPage() {
                 );
                 return href ? <Link key={label} href={href}>{card}</Link> : <div key={label}>{card}</div>;
               })}
-            </div>
-          )}
-
-          {/* ── Charts ── */}
-          {stats && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Revenue Chart */}
-              {stats.chart_data && stats.chart_data.length > 0 && (
-                <div className="bg-white border border-slate-200 rounded-xl p-6">
-                  <h3 className="text-sm font-bold text-slate-900 mb-4">Revenue Trend (7 Days)</h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={stats.chart_data}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                      <XAxis dataKey="date" stroke="#94a3b8" style={{ fontSize: '12px' }} />
-                      <YAxis stroke="#94a3b8" style={{ fontSize: '12px' }} />
-                      <Tooltip
-                        contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px', color: '#fff' }}
-                        formatter={(value) => `₹${Number(value).toLocaleString('en-IN')}`}
-                      />
-                      <Legend />
-                      <Line type="monotone" dataKey="revenue" stroke="#1e293b" strokeWidth={2} dot={{ fill: '#1e293b', r: 4 }} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              )}
-
-              {/* User Roles Pie Chart */}
-              {stats.total_users > 0 && (
-                <div className="bg-white border border-slate-200 rounded-xl p-6">
-                  <h3 className="text-sm font-bold text-slate-900 mb-4">User Breakdown</h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <PieChart>
-                      <Pie
-                        data={[
-                          { name: 'Admin', value: stats.superusers || 0 },
-                          { name: 'Users', value: stats.regular_users || 0 },
-                        ]}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ name, value }) => `${name}: ${value}`}
-                        outerRadius={80}
-                        dataKey="value"
-                        colors={['#1e293b', '#cbd5e1']}
-                      />
-                      <Tooltip formatter={(value) => value} />
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div className="mt-4 flex gap-4 text-sm">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 bg-slate-900 rounded-full" />
-                      <span className="text-slate-600">Admin: <strong>{stats.superusers}</strong></span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 bg-slate-300 rounded-full" />
-                      <span className="text-slate-600">Users: <strong>{stats.regular_users}</strong></span>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Category Sales Chart */}
-              {stats.category_data && stats.category_data.length > 0 && (
-                <div className="bg-white border border-slate-200 rounded-xl p-6 lg:col-span-2">
-                  <h3 className="text-sm font-bold text-slate-900 mb-4">Top Categories by Sales</h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={stats.category_data}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                      <XAxis dataKey="category" stroke="#94a3b8" style={{ fontSize: '12px' }} />
-                      <YAxis stroke="#94a3b8" style={{ fontSize: '12px' }} />
-                      <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px', color: '#fff' }} />
-                      <Bar dataKey="sales" fill="#1e293b" radius={[8, 8, 0, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              )}
             </div>
           )}
 
@@ -345,6 +294,61 @@ export default function AdminDashboardPage() {
       </main>
 
       <Footer />
+
+      {/* Users Modal */}
+      {showUsersModal && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={(e) => e.target === e.currentTarget && setShowUsersModal(false)}>
+          <div className="bg-white rounded-xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]">
+            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+              <h3 className="text-base font-bold text-slate-900">All Users ({users.length})</h3>
+              <button onClick={() => setShowUsersModal(false)} className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-6">
+              {users.length === 0 ? (
+                <div className="text-center py-8 text-slate-400">
+                  <Users className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                  <p>No users found</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {users.map((user) => (
+                    <div key={user.id || user.pk} className="border border-slate-200 rounded-lg p-4 hover:bg-slate-50 transition-colors">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h4 className="font-semibold text-slate-900">{user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : user.username}</h4>
+                          <p className="text-xs text-slate-500 mt-1">{user.email}</p>
+                          <div className="mt-2 flex items-center gap-2">
+                            {user.is_superuser && (
+                              <span className="text-[9px] font-bold uppercase tracking-widest bg-slate-900 text-white px-2 py-0.5 rounded-full">Admin</span>
+                            )}
+                            {user.is_staff && !user.is_superuser && (
+                              <span className="text-[9px] font-bold uppercase tracking-widest bg-slate-400 text-white px-2 py-0.5 rounded-full">Staff</span>
+                            )}
+                            {!user.is_superuser && !user.is_staff && (
+                              <span className="text-[9px] font-bold uppercase tracking-widest bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full">User</span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-[10px] text-slate-400">ID: {user.id || user.pk}</p>
+                          {user.date_joined && (
+                            <p className="text-[10px] text-slate-400 mt-1">Joined: {new Date(user.date_joined).toLocaleDateString('en-IN')}</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
