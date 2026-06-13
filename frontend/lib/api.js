@@ -752,3 +752,31 @@ export async function getActiveCoupon() {
     requireAuth: false,
   });
 }
+
+// ==========================================
+// LIKES APIs
+// ==========================================
+
+export async function toggleLike(productId) {
+  return await apiFetch('/likes/toggle-like/', {
+    method: 'POST',
+    body: JSON.stringify({ product_id: productId }),
+    requireAuth: true,
+  });
+}
+
+export async function checkIsLiked(productId) {
+  const query = new URLSearchParams({ product_id: productId });
+  return await apiFetch(`/likes/is-liked/?${query}`, {
+    method: 'GET',
+    requireAuth: true,
+  });
+}
+
+export async function getUserLikes() {
+  const data = await apiFetch('/likes/my-likes/', {
+    method: 'GET',
+    requireAuth: true,
+  });
+  return Array.isArray(data) ? data : data.results || [];
+}

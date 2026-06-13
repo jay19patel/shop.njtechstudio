@@ -35,9 +35,12 @@ class LikeViewSet(viewsets.ModelViewSet):
         except Product.DoesNotExist:
             raise NotFound(f'Product with id {product_id} does not exist')
 
+        current_price = self._calculate_product_price(product)
+
         like, created = Like.objects.get_or_create(
             user=request.user,
-            product=product
+            product=product,
+            defaults={'price_at_like': current_price}
         )
 
         if not created:
@@ -70,11 +73,22 @@ class LikeViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_200_OK
             )
         else:
-            Like.objects.create(user=request.user, product=product)
+            current_price = self._calculate_product_price(product)
+            Like.objects.create(user=request.user, product=product, price_at_like=current_price)
             return Response(
                 {'liked': True, 'message': 'Like added'},
                 status=status.HTTP_201_CREATED
             )
+
+    def _calculate_product_price(self, product):
+        """Calculate effective price with discount"""
+        from decimal import Decimal
+        try:
+            if product.discount_percentage and product.discount_percentage > 0:
+                return product.base_price * (Decimal(100) - Decimal(product.discount_percentage)) / Decimal(100)
+            return product.base_price
+        except Exception:
+            return product.base_price
 
     @action(detail=False, methods=['get'], url_path='my-likes')
     def my_likes(self, request):

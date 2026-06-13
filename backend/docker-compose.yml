@@ -1,38 +1,21 @@
 x-shared-environment: &shared-environment
   ENVIRONMENT: production
-  DATABASE_URL: postgresql://${POSTGRES_USER:-khusi}:${POSTGRES_PASSWORD:-khusi_password}@postgres:5432/${POSTGRES_DB:-khusi}
-  REDIS_URL: redis://redis:6379/1
-  CELERY_BROKER_URL: redis://redis:6379/0
-  CELERY_RESULT_BACKEND: redis://redis:6379/0
-  FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+  DATABASE_URL: postgresql://${POSTGRES_USER:-khusi}:${POSTGRES_PASSWORD:-khusi_password}@localhost:5432/${POSTGRES_DB:-khusi}
+  REDIS_URL: redis://localhost:6379/1
+  CELERY_BROKER_URL: redis://localhost:6379/0
+  CELERY_RESULT_BACKEND: redis://localhost:6379/0
 
 services:
-  celery-worker:
-    build:
-      context: .
-    image: khusi-backend:latest
-    command: celery -A ecommerce worker --loglevel=info
-    env_file:
-      - .env
-    environment:
-      <<: *shared-environment
-    depends_on:
-      web:
-        condition: service_started
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    volumes:
-      - khusi_media:/app/media
-    restart: unless-stopped
-
+  # PostgreSQL Database
   postgres:
     image: postgres:17-alpine
+    container_name: khusi_postgres
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-khusi}
       POSTGRES_USER: ${POSTGRES_USER:-khusi}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-khusi_password}
+    ports:
+      - "5432:5432"
     volumes:
       - khusi_postgres:/var/lib/postgresql/data
     healthcheck:
@@ -42,9 +25,13 @@ services:
       retries: 10
     restart: unless-stopped
 
+  # Redis for Celery & Caching
   redis:
     image: redis:7.4-alpine
+    container_name: khusi_redis
     command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
     volumes:
       - khusi_redis:/data
     healthcheck:
@@ -54,10 +41,35 @@ services:
       retries: 10
     restart: unless-stopped
 
+  # Celery Worker (runs on host Django, connects to Docker Redis/DB)
+  celery-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.celery
+    image: khusi-celery:latest
+    container_name: khusi_celery_worker
+    command: celery -A ecommerce worker --loglevel=info
+    env_file:
+      - .env
+    environment:
+      <<: *shared-environment
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - khusi_media:/app/media
+    restart: unless-stopped
+    networks:
+      - khusi_network
+
 volumes:
   khusi_postgres:
   khusi_redis:
   khusi_media:
-  khusi_static:
-  khusi_certbot_www:
-  khusi_letsencrypt:
+
+networks:
+  khusi_network:
+    driver: bridge

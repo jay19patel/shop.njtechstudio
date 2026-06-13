@@ -7,7 +7,7 @@ import Footer from '../../../components/Footer';
 import Link from 'next/link';
 import { useCart } from '../../../context/CartContext';
 import { useAuth } from '../../../context/AuthContext';
-import { getProduct, getCategories, normalizeProduct } from '../../../lib/api';
+import { getProduct, getCategories, normalizeProduct, toggleLike, checkIsLiked } from '../../../lib/api';
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -21,6 +21,8 @@ const ProductDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [addedToCart, setAddedToCart] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeLoading, setLikeLoading] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -33,10 +35,16 @@ const ProductDetailPage = () => {
         setProduct(norm);
         setActiveImage(norm?.image || '');
         setCategories(cats);
+
+        if (isAuthenticated) {
+          checkIsLiked(id)
+            .then((res) => setIsLiked(res?.is_liked || false))
+            .catch(() => setIsLiked(false));
+        }
       })
       .catch((err) => setError(err.message || 'Product not found.'))
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, isAuthenticated]);
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -48,11 +56,29 @@ const ProductDetailPage = () => {
   const handleBuyNow = () => {
     if (!product) return;
     addToCart(product);
-    
+
     if (!isAuthenticated) {
       router.push('/login?redirect=/checkout');
     } else {
       router.push('/checkout');
+    }
+  };
+
+  const handleLike = async () => {
+    if (!isAuthenticated) {
+      router.push('/login?redirect=/shop/' + id);
+      return;
+    }
+    if (!product || likeLoading) return;
+
+    setLikeLoading(true);
+    try {
+      await toggleLike(product.id);
+      setIsLiked(!isLiked);
+    } catch (err) {
+      console.error('Failed to toggle like:', err);
+    } finally {
+      setLikeLoading(false);
     }
   };
 
@@ -251,8 +277,22 @@ const ProductDetailPage = () => {
                 >
                   Buy Now
                 </button>
-                <button className="p-3 md:p-4 border border-slate-200 rounded-xl text-slate-500 hover:text-slate-900 hover:border-slate-300 hover:bg-slate-50 transition-all">
-                  <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button
+                  onClick={handleLike}
+                  disabled={likeLoading}
+                  className={`p-3 md:p-4 border rounded-xl transition-all ${
+                    isLiked
+                      ? 'border-red-300 bg-red-50 text-red-500 hover:border-red-400'
+                      : 'border-slate-200 text-slate-500 hover:text-slate-900 hover:border-slate-300 hover:bg-slate-50'
+                  }`}
+                  title={isAuthenticated ? (isLiked ? 'Unlike' : 'Like') : 'Login to like'}
+                >
+                  <svg
+                    className="w-5 h-5 md:w-6 md:h-6"
+                    fill={isLiked ? 'currentColor' : 'none'}
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                   </svg>
                 </button>

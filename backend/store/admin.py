@@ -1,8 +1,8 @@
 from django.contrib import admin
 from .models import (
-    Category, Product, ProductImage, Cart, CartItem, 
+    Category, Product, ProductImage, Cart, CartItem,
     Order, OrderItem, Address, Contact, Payment, Testimonial, ContactMessage,
-    EmailLog, Coupon
+    EmailLog, Coupon, Like
 )
 
 @admin.register(Coupon)
@@ -81,6 +81,16 @@ class ContactMessageAdmin(admin.ModelAdmin):
     list_filter = ['is_read', 'created_at']
     search_fields = ['name', 'email', 'subject', 'message']
 
+@admin.register(Like)
+class LikeAdmin(admin.ModelAdmin):
+    list_display = ['user', 'product', 'price_at_like', 'created_at']
+    list_filter = ['created_at', 'user']
+    search_fields = ['user__username', 'product__name']
+    readonly_fields = ['user', 'product', 'price_at_like', 'created_at']
+
+    def has_add_permission(self, request):
+        return False
+
 @admin.register(EmailLog)
 class EmailLogAdmin(admin.ModelAdmin):
     list_display = ['id', 'email_type', 'to_email', 'subject', 'status', 'attempts', 'queued_at', 'sent_at']
@@ -116,7 +126,7 @@ def custom_get_app_list(self, request, app_label=None):
     
     # Define custom groups and their models
     groups = {
-        'Customer Management': ['Users', 'Addresses', 'Contacts'],
+        'Customer Management': ['Users', 'Addresses', 'Contacts', 'Likes'],
         'Catalog': ['Categories', 'Products'],
         'Sales & Orders': ['Carts', 'Orders', 'Payments', 'Coupons'],
         'Support & Feedback': ['Contact messages', 'Testimonials'],

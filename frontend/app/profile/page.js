@@ -6,13 +6,13 @@ import Footer from '../../components/Footer';
 import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { User, Lock, Save, AlertCircle, CheckCircle2, MapPin, Phone, Plus, Star } from 'lucide-react';
-import { getAddresses, addAddress, setDefaultAddress, getContacts, addContact, setDefaultContact } from '../../lib/api';
+import { getAddresses, addAddress, setDefaultAddress, getContacts, addContact, setDefaultContact, getUserLikes } from '../../lib/api';
 
 export default function ProfilePage() {
   const { user, isAuthenticated, loading: authLoading, updateUserProfile } = useAuth();
   const router = useRouter();
 
-  const [activeTab, setActiveTab] = useState('profile'); // profile, addresses, contacts
+  const [activeTab, setActiveTab] = useState('profile'); // profile, addresses, contacts, likes
 
   const [formData, setFormData] = useState({
     full_name: '',
@@ -34,6 +34,10 @@ export default function ProfilePage() {
   const [showAddContact, setShowAddContact] = useState(false);
   const [contactForm, setContactForm] = useState({ phone_number: '', is_default: false });
 
+  // Likes State
+  const [likedProducts, setLikedProducts] = useState([]);
+  const [likesLoading, setLikesLoading] = useState(false);
+
   useEffect(() => {
     if (user) {
       setFormData((prev) => ({
@@ -54,6 +58,7 @@ export default function ProfilePage() {
     if (isAuthenticated) {
       fetchAddresses();
       fetchContacts();
+      fetchLikes();
     }
   }, [isAuthenticated]);
 
@@ -154,6 +159,20 @@ export default function ProfilePage() {
     }
   };
 
+  // --- Likes Logic ---
+  const fetchLikes = async () => {
+    setLikesLoading(true);
+    try {
+      const data = await getUserLikes();
+      setLikedProducts(data || []);
+    } catch (err) {
+      console.error('Failed to fetch likes:', err);
+      setLikedProducts([]);
+    } finally {
+      setLikesLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white flex flex-col font-sans text-slate-900">
       <Navbar />
@@ -173,6 +192,12 @@ export default function ProfilePage() {
           <button onClick={() => setActiveTab('contacts')} className={`p-4 rounded-2xl flex items-center gap-3 transition-all ${activeTab === 'contacts' ? 'bg-slate-900 text-white shadow-lg' : 'bg-white hover:bg-slate-50 text-slate-600'}`}>
             <Phone className="w-5 h-5" />
             <span className="font-bold text-sm uppercase tracking-wider">Contacts</span>
+          </button>
+          <button onClick={() => { setActiveTab('likes'); fetchLikes(); }} className={`p-4 rounded-2xl flex items-center gap-3 transition-all ${activeTab === 'likes' ? 'bg-slate-900 text-white shadow-lg' : 'bg-white hover:bg-slate-50 text-slate-600'}`}>
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+            <span className="font-bold text-sm uppercase tracking-wider">Liked Products</span>
           </button>
 
         </div>
@@ -300,6 +325,67 @@ export default function ProfilePage() {
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* LIKES TAB */}
+          {activeTab === 'likes' && (
+            <div className="flex flex-col gap-6">
+              <h2 className="text-2xl font-extrabold tracking-tight uppercase text-blue-950">
+                Your Liked Products
+              </h2>
+
+              {likesLoading ? (
+                <div className="text-slate-500 text-sm">Loading...</div>
+              ) : likedProducts.length === 0 ? (
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 flex items-center justify-center">
+                    <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                  </div>
+                  <p className="text-slate-500 text-sm">You haven't liked any products yet.</p>
+                  <a href="/shop" className="text-blue-950 font-bold text-sm mt-4 inline-block hover:underline">
+                    Browse Products →
+                  </a>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {likedProducts.map((like) => (
+                    <div key={like.id} className="p-4 rounded-2xl border border-slate-100 bg-white hover:shadow-lg transition-all">
+                      {like.product_image && (
+                        <img
+                          src={like.product_image}
+                          alt={like.product_name}
+                          className="w-full h-40 object-cover rounded-xl mb-4"
+                        />
+                      )}
+                      <h3 className="font-bold text-slate-900 text-sm mb-2 line-clamp-2">
+                        {like.product_name}
+                      </h3>
+                      <div className="flex items-baseline gap-2 mb-3">
+                        <span className="text-lg font-black text-slate-900">
+                          ₹{like.current_price?.toFixed(2) || 0}
+                        </span>
+                        {like.price_when_liked && like.price_when_liked !== like.current_price && (
+                          <span className="text-xs text-slate-400 line-through">
+                            ₹{like.price_when_liked?.toFixed(2) || 0}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold mb-4">
+                        Liked {new Date(like.liked_date).toLocaleDateString()}
+                      </p>
+                      <a
+                        href={`/shop/${like.product_id}`}
+                        className="w-full block bg-slate-900 text-white text-center py-2 rounded-lg text-sm font-bold hover:bg-slate-800 transition-all"
+                      >
+                        View Product
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 

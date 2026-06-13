@@ -115,24 +115,19 @@ WSGI_APPLICATION = "ecommerce.wsgi.application"
 
 
 # Database
-# Development  -> SQLite (zero config, local only)
-# Production   -> PostgreSQL (DATABASE_URL)
+# PostgreSQL is used for backend development. In Docker, docker-compose.yml
+# overrides DATABASE_URL to use the postgres service hostname.
 
-if IS_PRODUCTION:
-    import dj_database_url  # type: ignore[import]
-    _db_url = os.getenv('DATABASE_URL')
-    if not _db_url:
-        raise RuntimeError(
-            "Production database is not configured. Set DATABASE_URL."
-        )
-    DATABASES = {'default': dj_database_url.config(default=_db_url, conn_max_age=600)}
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.getenv('SQLITE_PATH', BASE_DIR / 'db.sqlite3'),
-        }
-    }
+import dj_database_url  # type: ignore[import]
+
+DATABASE_URL = os.getenv(
+    'DATABASE_URL',
+    'postgresql://shop_user:shop_password@localhost:5432/shop_db',
+)
+
+DATABASES = {
+    'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=600)
+}
 
 
 # Password validation
