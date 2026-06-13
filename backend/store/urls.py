@@ -4,7 +4,7 @@ from .views import (
     CategoryViewSet, ProductViewSet, CartViewSet, OrderViewSet,
     PaymentViewSet, TestimonialViewSet, AddressViewSet, ContactViewSet,
     RegisterView, LoginView, MeView, LogoutView, GoogleLogin, UploadScreenshotView,
-    AdminDashboardStatsView, AdminOrderViewSet, AdminProductViewSet,
+    AdminDashboardStatsView, AdminOrderViewSet, AdminProductViewSet, AdminCategoryViewSet,
     ContactMessageViewSet, FAQViewSet, LikeViewSet
 )
 from .views.coupon import ValidateCouponView, ActiveCouponsView
@@ -23,6 +23,7 @@ router.register(r'addresses', AddressViewSet, basename='address')
 router.register(r'contacts', ContactViewSet, basename='contact')
 router.register(r'admin/orders', AdminOrderViewSet, basename='admin-order')
 router.register(r'admin/products', AdminProductViewSet, basename='admin-product')
+router.register(r'admin/categories', AdminCategoryViewSet, basename='admin-category')
 router.register(r'contact-messages', ContactMessageViewSet, basename='contact-message')
 
 urlpatterns = [

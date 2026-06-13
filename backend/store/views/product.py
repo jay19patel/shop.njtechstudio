@@ -24,9 +24,15 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     """Public read-only API for active products."""
 
-    queryset = Product.objects.filter(is_active=True).order_by('-created_at', '-id')
     serializer_class = ProductSerializer
     permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self):
+        queryset = Product.objects.filter(is_active=True).order_by('-created_at', '-id')
+        category_id = self.request.query_params.get('category_id')
+        if category_id:
+            queryset = queryset.filter(category_id=category_id)
+        return queryset
 
 
 # ── Admin ─────────────────────────────────────────────────────────────────────

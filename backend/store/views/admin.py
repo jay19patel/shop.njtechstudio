@@ -2,6 +2,7 @@
 import logging
 from datetime import timedelta
 
+from django.contrib.auth.models import User
 from django.db.models import Count, Q, Sum
 from django.db.models.functions import TruncDate
 from django.utils import timezone
@@ -29,6 +30,11 @@ class AdminDashboardStatsView(views.APIView):
             .aggregate(total=Sum('total_amount'))['total'] or 0
         )
 
+        # User stats
+        total_users = User.objects.count()
+        superusers = User.objects.filter(is_superuser=True).count()
+        regular_users = total_users - superusers
+
         # Last 7 days chart data
         seven_days_ago = timezone.now() - timedelta(days=7)
         daily_stats = (
@@ -51,6 +57,20 @@ class AdminDashboardStatsView(views.APIView):
             for stat in daily_stats
         ]
 
+        # Category sales breakdown
+        from ..models import Category
+        category_sales = (
+            Order.objects
+            .filter(payment_status='VERIFIED')
+            .values('items__product__category__name')
+            .annotate(total=Sum('items__quantity'))
+            .order_by('-total')[:5]
+        )
+        category_data = [
+            {'category': cat['items__product__category__name'] or 'Uncategorized', 'sales': cat['total']}
+            for cat in category_sales
+        ]
+
         total_messages  = ContactMessage.objects.count()
         unread_messages = ContactMessage.objects.filter(is_read=False).count()
         return Response({
@@ -58,11 +78,28 @@ class AdminDashboardStatsView(views.APIView):
             'total_orders':    total_orders,
             'pending_orders':  pending_orders,
             'total_revenue':   float(total_revenue),
+            'total_users':     total_users,
+            'superusers':      superusers,
+            'regular_users':   regular_users,
             'chart_data':      chart_data,
+            'category_data':   category_data,
             'total_messages':  total_messages,
             'unread_messages': unread_messages,
             'read_messages':   total_messages - unread_messages,
         })
+
+
+class AdminCategoryViewSet(viewsets.ModelViewSet):
+    """Admin full CRUD for categories."""
+
+    from ..serializers import CategorySerializer
+    serializer_class = CategorySerializer
+    queryset = None
+    permission_classes = [permissions.IsAdminUser]
+
+    def get_queryset(self):
+        from ..models import Category
+        return Category.objects.all().order_by('name')
 
 
 class ContactMessageViewSet(viewsets.ModelViewSet):

@@ -6,8 +6,9 @@ import Footer from '../../../components/Footer';
 import { useAuth } from '../../../context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { getAdminStats, getAdminOrders, updateAdminOrder } from '../../../lib/api';
-import { Package, ShoppingBag, Banknote, Clock, ChevronLeft, Loader2, Search, ExternalLink, Image as ImageIcon, Mail, FileText, TrendingUp } from 'lucide-react';
+import { Package, ShoppingBag, Banknote, Clock, ChevronLeft, Loader2, Search, ExternalLink, Image as ImageIcon, Mail, FileText, TrendingUp, Users } from 'lucide-react';
 import Link from 'next/link';
+import { LineChart, Line, BarChart, Bar, PieChart, Pie, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export default function AdminDashboardPage() {
   const { user, isAuthenticated, loading: authLoading } = useAuth();
@@ -75,11 +76,12 @@ export default function AdminDashboardPage() {
   );
 
   const statCards = [
-    { label: 'Revenue', value: `₹${Number(stats?.total_revenue || 0).toLocaleString('en-IN')}`, icon: Banknote, accent: 'text-slate-900' },
-    { label: 'Orders', value: stats?.total_orders ?? 0, icon: ShoppingBag, accent: 'text-slate-900' },
-    { label: 'Pending', value: stats?.pending_orders ?? 0, icon: Clock, accent: 'text-orange-600', highlight: (stats?.pending_orders || 0) > 0 },
-    { label: 'Products', value: stats?.total_products ?? 0, icon: Package, accent: 'text-slate-900', href: '/admin/products' },
-    { label: 'Messages', value: stats?.total_messages ?? 0, icon: Mail, accent: 'text-slate-900', href: '/admin/messages', badge: stats?.unread_messages > 0 ? stats.unread_messages : null },
+    { label: 'Revenue', value: `₹${Number(stats?.total_revenue || 0).toLocaleString('en-IN')}`, icon: Banknote },
+    { label: 'Orders', value: stats?.total_orders ?? 0, icon: ShoppingBag },
+    { label: 'Users', value: stats?.total_users ?? 0, icon: Users },
+    { label: 'Pending', value: stats?.pending_orders ?? 0, icon: Clock, highlight: (stats?.pending_orders || 0) > 0 },
+    { label: 'Products', value: stats?.total_products ?? 0, icon: Package, href: '/admin/products' },
+    { label: 'Messages', value: stats?.total_messages ?? 0, icon: Mail, href: '/admin/messages', badge: stats?.unread_messages > 0 ? stats.unread_messages : null },
   ];
 
   return (
@@ -117,8 +119,8 @@ export default function AdminDashboardPage() {
 
           {/* ── Stats ── */}
           {stats && (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-              {statCards.map(({ label, value, icon: Icon, accent, highlight, href, badge }) => {
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+              {statCards.map(({ label, value, icon: Icon, highlight, href, badge }) => {
                 const card = (
                   <div className={`bg-white border rounded-xl p-5 flex flex-col gap-3 ${highlight ? 'border-orange-200 bg-orange-50/30' : 'border-slate-200'} ${href ? 'hover:border-slate-300 hover:shadow-sm transition-all cursor-pointer' : ''}`}>
                     <div className="flex items-center justify-between">
@@ -133,6 +135,82 @@ export default function AdminDashboardPage() {
                 );
                 return href ? <Link key={label} href={href}>{card}</Link> : <div key={label}>{card}</div>;
               })}
+            </div>
+          )}
+
+          {/* ── Charts ── */}
+          {stats && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Revenue Chart */}
+              {stats.chart_data && stats.chart_data.length > 0 && (
+                <div className="bg-white border border-slate-200 rounded-xl p-6">
+                  <h3 className="text-sm font-bold text-slate-900 mb-4">Revenue Trend (7 Days)</h3>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={stats.chart_data}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                      <XAxis dataKey="date" stroke="#94a3b8" style={{ fontSize: '12px' }} />
+                      <YAxis stroke="#94a3b8" style={{ fontSize: '12px' }} />
+                      <Tooltip
+                        contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px', color: '#fff' }}
+                        formatter={(value) => `₹${Number(value).toLocaleString('en-IN')}`}
+                      />
+                      <Legend />
+                      <Line type="monotone" dataKey="revenue" stroke="#1e293b" strokeWidth={2} dot={{ fill: '#1e293b', r: 4 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+
+              {/* User Roles Pie Chart */}
+              {stats.total_users > 0 && (
+                <div className="bg-white border border-slate-200 rounded-xl p-6">
+                  <h3 className="text-sm font-bold text-slate-900 mb-4">User Breakdown</h3>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Pie
+                        data={[
+                          { name: 'Admin', value: stats.superusers || 0 },
+                          { name: 'Users', value: stats.regular_users || 0 },
+                        ]}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ name, value }) => `${name}: ${value}`}
+                        outerRadius={80}
+                        dataKey="value"
+                        colors={['#1e293b', '#cbd5e1']}
+                      />
+                      <Tooltip formatter={(value) => value} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="mt-4 flex gap-4 text-sm">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-slate-900 rounded-full" />
+                      <span className="text-slate-600">Admin: <strong>{stats.superusers}</strong></span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-slate-300 rounded-full" />
+                      <span className="text-slate-600">Users: <strong>{stats.regular_users}</strong></span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Category Sales Chart */}
+              {stats.category_data && stats.category_data.length > 0 && (
+                <div className="bg-white border border-slate-200 rounded-xl p-6 lg:col-span-2">
+                  <h3 className="text-sm font-bold text-slate-900 mb-4">Top Categories by Sales</h3>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={stats.category_data}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                      <XAxis dataKey="category" stroke="#94a3b8" style={{ fontSize: '12px' }} />
+                      <YAxis stroke="#94a3b8" style={{ fontSize: '12px' }} />
+                      <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px', color: '#fff' }} />
+                      <Bar dataKey="sales" fill="#1e293b" radius={[8, 8, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
             </div>
           )}
 

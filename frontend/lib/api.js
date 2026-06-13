@@ -703,6 +703,38 @@ export async function deleteAdminProduct(id) {
 }
 
 // ==========================================
+// ADMIN CATEGORY APIs
+// ==========================================
+
+export async function getAdminCategories() {
+  const data = await apiFetch('/admin/categories/', { requireAuth: true });
+  return data.results ? data.results : data;
+}
+
+export async function createAdminCategory(categoryData) {
+  return await apiFetch('/admin/categories/', {
+    method: 'POST',
+    body: JSON.stringify(categoryData),
+    requireAuth: true,
+  });
+}
+
+export async function updateAdminCategory(id, categoryData) {
+  return await apiFetch(`/admin/categories/${id}/`, {
+    method: 'PATCH',
+    body: JSON.stringify(categoryData),
+    requireAuth: true,
+  });
+}
+
+export async function deleteAdminCategory(id) {
+  return await apiFetch(`/admin/categories/${id}/`, {
+    method: 'DELETE',
+    requireAuth: true,
+  });
+}
+
+// ==========================================
 // CONTACT MESSAGE APIs
 // ==========================================
 
