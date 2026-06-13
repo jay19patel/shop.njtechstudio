@@ -8,6 +8,40 @@ import { useRouter } from 'next/navigation';
 import { Search, ChevronLeft, Loader2, Mail, Calendar, Shield, User } from 'lucide-react';
 import Link from 'next/link';
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
+
+async function apiFetch(path, options = {}) {
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  const url = `${API_BASE}${cleanPath}`;
+  const { requireAuth = true, ...fetchOptions } = options;
+
+  let authHeader = {};
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("auth_token");
+    if (requireAuth && token) {
+      authHeader = { Authorization: `Bearer ${token}` };
+    }
+  }
+
+  const headers = {
+    "Content-Type": "application/json",
+    ...authHeader,
+    ...fetchOptions.headers,
+  };
+
+  const res = await fetch(url, {
+    ...fetchOptions,
+    headers,
+  });
+
+  if (!res.ok) {
+    const body = await res.json();
+    throw new Error(body?.detail || body?.message || `API error ${res.status}`);
+  }
+
+  return res.json();
+}
+
 export default function AdminCustomerPage() {
   const { user, isAuthenticated, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -28,13 +62,7 @@ export default function AdminCustomerPage() {
   const fetchCustomers = async () => {
     setLoading(true);
     try {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : '';
-      const res = await fetch('/api/admin/users/', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      const data = await res.json();
+      const data = await apiFetch('/admin/users/', { requireAuth: true });
       setCustomers(data.results || data || []);
     } catch (err) {
       console.error('Failed to load customers:', err);
