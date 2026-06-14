@@ -1,12 +1,18 @@
 """
 Django signals for the store app.
 Automatically sends emails when Order status or payment_status changes.
+Custom events for analytics: product_viewed, cart_item_added, order_created.
 """
 import logging
+from django.dispatch import Signal, receiver
 from django.db.models.signals import post_save, pre_save
-from django.dispatch import receiver
 
 logger = logging.getLogger(__name__)
+
+# Custom signals for analytics events (decoupled from Django models)
+product_viewed = Signal()
+cart_item_added = Signal()
+order_created = Signal()
 
 # We use pre_save to capture old values before they are overwritten,
 # and post_save to trigger emails after the save is committed.

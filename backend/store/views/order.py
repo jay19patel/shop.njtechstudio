@@ -6,6 +6,7 @@ from rest_framework.response import Response
 
 from ..models import Order, OrderItem, Payment, Product
 from ..serializers import OrderSerializer
+from ..signals import order_created
 
 logger = logging.getLogger(__name__)
 
@@ -108,6 +109,17 @@ class OrderViewSet(viewsets.ModelViewSet):
                 upi_transaction_id = upi_transaction_id,
                 screenshot_url = data.get('screenshot_id'),
                 status         = 'VERIFIED' if upi_transaction_id else 'PENDING',
+            )
+
+        # Emit order created signal (insights app listens and publishes to Kafka)
+        if user:
+            order_created.send(
+                sender=self.__class__,
+                request=request,
+                user_id=user.id,
+                order_id=order.id,
+                total_amount=float(order.total_amount),
+                items_count=len(items_to_process),
             )
 
         # Fire confirmation email + PDF invoice

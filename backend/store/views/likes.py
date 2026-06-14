@@ -68,6 +68,7 @@ class LikeViewSet(viewsets.ModelViewSet):
 
         if like.exists():
             like.delete()
+            # Signal handler in insights will publish unlike event automatically
             return Response(
                 {'liked': False, 'message': 'Like removed'},
                 status=status.HTTP_200_OK
@@ -75,6 +76,7 @@ class LikeViewSet(viewsets.ModelViewSet):
         else:
             current_price = self._calculate_product_price(product)
             Like.objects.create(user=request.user, product=product, price_at_like=current_price)
+            # Signal handler in insights will publish like event automatically
             return Response(
                 {'liked': True, 'message': 'Like added'},
                 status=status.HTTP_201_CREATED

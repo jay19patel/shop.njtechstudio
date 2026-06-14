@@ -64,7 +64,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "corsheaders",
-    # Custom App
+    # Custom Apps
+    'insights',
     'store',
     'rest_framework',
     'rest_framework_simplejwt',

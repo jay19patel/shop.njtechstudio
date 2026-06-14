@@ -9,6 +9,7 @@ from rest_framework.response import Response
 
 from ..models import Category, Product, ProductImage
 from ..serializers import CategorySerializer, ProductSerializer
+from ..signals import product_viewed
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +34,23 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
         if category_id:
             queryset = queryset.filter(category_id=category_id)
         return queryset
+
+    def retrieve(self, request, *args, **kwargs):
+        """Get product details and track product view event."""
+        product = self.get_object()
+
+        # Emit product view signal (insights app listens and publishes to Kafka)
+        user_id = request.user.id if request.user.is_authenticated else None
+        product_viewed.send(
+            sender=self.__class__,
+            request=request,
+            user_id=user_id,
+            product_id=product.id,
+            product_name=product.name,
+        )
+
+        # Return product details
+        return super().retrieve(request, *args, **kwargs)
 
 
 # ── Admin ─────────────────────────────────────────────────────────────────────

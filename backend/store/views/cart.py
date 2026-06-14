@@ -8,6 +8,7 @@ from rest_framework.response import Response
 
 from ..models import Cart, CartItem, Order, OrderItem, Product
 from ..serializers import CartSerializer, CartItemSerializer, OrderSerializer
+from ..signals import cart_item_added, order_created
 
 logger = logging.getLogger(__name__)
 
@@ -112,6 +113,18 @@ class CartViewSet(viewsets.ModelViewSet):
             item.quantity += quantity
             item.save()
 
+        # Emit cart item added signal (insights app listens and publishes to Kafka)
+        if cart.user:
+            cart_item_added.send(
+                sender=self.__class__,
+                request=request,
+                user_id=cart.user.id,
+                product_id=product.id,
+                product_name=product.name,
+                quantity=quantity,
+                price=float(product.base_price),
+            )
+
         return Response(CartItemSerializer(item).data, status=status.HTTP_201_CREATED)
 
     # ── checkout ──
@@ -162,6 +175,16 @@ class CartViewSet(viewsets.ModelViewSet):
 
         OrderItem.objects.bulk_create(order_items)
         cart.items.all().delete()
+
+        # Emit order created signal (insights app listens and publishes to Kafka)
+        order_created.send(
+            sender=self.__class__,
+            request=request,
+            user_id=request.user.id,
+            order_id=order.id,
+            total_amount=float(order.total_amount),
+            items_count=len(items),
+        )
 
         logger.info("cart_checkout_complete",
                     extra={"order_id": order.id, "user_id": request.user.id})

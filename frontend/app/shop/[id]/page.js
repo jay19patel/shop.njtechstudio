@@ -44,7 +44,7 @@ const ProductDetailPage = () => {
       })
       .catch((err) => setError(err.message || 'Product not found.'))
       .finally(() => setLoading(false));
-  }, [id, isAuthenticated]);
+  }, [id]);
 
   const handleAddToCart = () => {
     if (!product) return;

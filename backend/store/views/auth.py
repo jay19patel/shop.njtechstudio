@@ -62,6 +62,7 @@ class LoginView(views.APIView):
 
         refresh = RefreshToken.for_user(user)
         logger.info("user_logged_in", extra={"user_id": user.id})
+
         return Response({
             'user': {
                 'id': user.id, 'email': user.email,
