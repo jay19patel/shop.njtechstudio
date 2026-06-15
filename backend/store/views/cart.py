@@ -156,6 +156,12 @@ class CartViewSet(viewsets.ModelViewSet):
             user=request.user,
             total_amount=total_amount,
             shipping_address=shipping_address,
+            customer_name=request.data.get('customer_name') or request.user.get_full_name() or request.user.first_name,
+            customer_email=request.data.get('customer_email') or request.user.email,
+            customer_phone=request.data.get('customer_phone', ''),
+            city=request.data.get('city', ''),
+            state=request.data.get('state', ''),
+            pincode=request.data.get('pincode', ''),
         )
 
         # Create order items and decrease inventory

@@ -4,15 +4,14 @@ from .product import Product
 
 
 class Cart(models.Model):
-    """Shopping cart — can belong to a logged-in user or an anonymous session."""
+    """Shopping cart — belongs to a logged-in user."""
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='carts')
-    session_id = models.CharField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
-        owner = self.user.username if self.user else f"session:{self.session_id}"
+        owner = self.user.username if self.user else "anonymous"
         return f"Cart [{owner}]"
 
 

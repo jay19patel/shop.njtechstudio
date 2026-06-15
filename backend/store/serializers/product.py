@@ -29,7 +29,7 @@ class SimpleProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ['id', 'name', 'slug', 'primary_image', 'discount_percentage', 'available_quantity']
+        fields = ['id', 'name', 'slug', 'base_price', 'primary_image', 'discount_percentage', 'available_quantity']
 
     def get_primary_image(self, obj) -> str | None:
         img = obj.images.filter(is_primary=True).first() or obj.images.first()

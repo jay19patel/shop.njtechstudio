@@ -29,7 +29,7 @@ class AdminDashboardStatsView(views.APIView):
             .filter(payment_status='VERIFIED')
             .aggregate(total=Sum('total_amount'))['total'] or 0
         )
-
+        total_users     = User.objects.filter(is_staff=False).count()
         total_messages  = ContactMessage.objects.count()
         unread_messages = ContactMessage.objects.filter(is_read=False).count()
         return Response({
@@ -37,6 +37,7 @@ class AdminDashboardStatsView(views.APIView):
             'total_orders':    total_orders,
             'pending_orders':  pending_orders,
             'total_revenue':   float(total_revenue),
+            'total_users':     total_users,
             'total_messages':  total_messages,
             'unread_messages': unread_messages,
             'read_messages':   total_messages - unread_messages,

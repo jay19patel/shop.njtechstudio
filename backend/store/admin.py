@@ -36,8 +36,8 @@ class CartItemInline(admin.TabularInline):
 
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'session_id', 'created_at', 'updated_at']
-    search_fields = ['session_id']
+    list_display = ['id', 'user', 'created_at', 'updated_at']
+    search_fields = ['user__username', 'user__email']
     inlines = [CartItemInline]
 
 class OrderItemInline(admin.TabularInline):

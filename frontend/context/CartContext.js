@@ -54,17 +54,22 @@ function normalizeCartLinesFromApi(items) {
   return items.map((line) => {
     const productId = resolveProductIdForCartLine(line);
     const embedded = line.product && typeof line.product === 'object' ? line.product : null;
+    // unit_price comes from CartItemSerializer; embedded.base_price is the fallback
+    const priceValue = Number(
+      line.unit_price ?? embedded?.base_price ?? line.price ?? embedded?.price_value ?? 0
+    );
+    // primary_image from SimpleProductSerializer is already a URL string
+    const image =
+      line.image ||
+      (typeof embedded?.primary_image === 'string' ? embedded.primary_image : null) ||
+      embedded?.image_url ||
+      null;
     return {
       id: productId,
       name: line.name || embedded?.name || 'Item',
-      priceValue: Number(line.price ?? embedded?.price_value ?? 0),
-      price: line.price,
-      image:
-        line.image ||
-        embedded?.primary_image?.file_path ||
-        embedded?.image_url ||
-        embedded?.image ||
-        null,
+      priceValue,
+      price: priceValue,
+      image,
       quantity: Number(line.quantity ?? 1),
     };
   });
