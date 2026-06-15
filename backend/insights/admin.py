@@ -24,7 +24,7 @@ class ProductEmbeddingAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
         ('Metadata', {
-            'fields': ('description', 'created_by'),
+            'fields': ('description',),
         }),
         ('Timestamps', {
             'fields': ('created_at', 'updated_at'),

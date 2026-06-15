@@ -30,9 +30,17 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         queryset = Product.objects.filter(is_active=True).order_by('-created_at', '-id')
+
+        # Filter by category
         category_id = self.request.query_params.get('category_id')
         if category_id:
             queryset = queryset.filter(category_id=category_id)
+
+        # Search by product name/title
+        search = self.request.query_params.get('search')
+        if search:
+            queryset = queryset.filter(name__icontains=search)
+
         return queryset
 
     def retrieve(self, request, *args, **kwargs):

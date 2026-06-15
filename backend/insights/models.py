@@ -3,70 +3,46 @@ from store.models import Product
 
 
 class ProductEmbedding(models.Model):
-    """
-    Store product embeddings for ML/AI features like recommendations.
-    One-to-One relationship with Product model.
-    """
-
     product = models.OneToOneField(
         Product,
         on_delete=models.CASCADE,
-        related_name='embedding',
-        help_text="Reference to the product"
+        related_name='embedding'
     )
 
-    # Embedding metadata
     embedding_name = models.CharField(
         max_length=255,
-        help_text="Name/identifier for the embedding (e.g., 'product-desc-v1')"
+        default="qwen3-embedding"
     )
 
     embedding_version = models.CharField(
         max_length=50,
-        default="1.0",
-        help_text="Version of the embedding model used"
+        default="0.6b"
     )
 
-    # Vector representation (stored as JSON or binary)
     embedding_vector = models.JSONField(
         null=True,
-        blank=True,
-        help_text="Vector embedding as JSON array (e.g., [0.123, 0.456, ...])"
+        blank=True
     )
 
-    # Metadata
     embedding_source = models.CharField(
         max_length=100,
         choices=[
-            ('manual', 'Manually Created'),
-            ('ai_generated', 'AI Generated'),
-            ('ml_model', 'ML Model Generated'),
-            ('user_feedback', 'Based on User Feedback'),
+            ('ollama', 'Ollama Local'),
+            ('manual', 'Manual'),
         ],
-        default='manual',
-        help_text="Source of the embedding"
+        default='ollama'
     )
 
-    description = models.TextField(
-        blank=True,
-        help_text="Description or notes about this embedding"
-    )
+    description = models.TextField(blank=True)
 
-    # Tracking
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    created_by = models.CharField(
-        max_length=255,
-        blank=True,
-        help_text="User or system that created the embedding"
-    )
 
     class Meta:
         verbose_name = "Product Embedding"
         verbose_name_plural = "Product Embeddings"
         ordering = ['-updated_at']
         indexes = [
-            models.Index(fields=['embedding_name']),
             models.Index(fields=['embedding_source']),
             models.Index(fields=['-updated_at']),
         ]

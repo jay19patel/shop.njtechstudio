@@ -25,6 +25,7 @@ urlpatterns = [
     # Required by django-allauth for account/social auth browser flows.
     path("accounts/", include("allauth.urls")),
     path("api/", include("store.urls")),
+    path("api/insights/", include("insights.urls")),
 ]
 
 if settings.DEBUG:

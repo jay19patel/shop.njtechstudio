@@ -7,4 +7,4 @@ class InsightsConfig(AppConfig):
 
     def ready(self):
         """Register signal handlers when app is ready."""
-        from insights import events  # noqa
+        from insights import events, signals  # noqa

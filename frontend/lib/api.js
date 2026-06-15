@@ -786,6 +786,24 @@ export async function getActiveCoupon() {
 }
 
 // ==========================================
+// AI SEARCH API
+// ==========================================
+
+/**
+ * Smart search via AI (semantic + intent filters) or simple (name match).
+ * @param {string} query - User's search text
+ * @param {boolean} aiEnabled - true = AI mode, false = simple name search
+ * @param {number} limit - max results
+ */
+export async function aiSearch(query, limit = 16) {
+  return apiFetch('/insights/chat/', {
+    method: 'POST',
+    body: JSON.stringify({ query, limit }),
+    requireAuth: false,
+  });
+}
+
+// ==========================================
 // LIKES APIs
 // ==========================================
 
