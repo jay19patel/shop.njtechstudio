@@ -131,6 +131,7 @@ def custom_get_app_list(self, request, app_label=None):
         'Sales & Orders': ['Carts', 'Orders', 'Payments', 'Coupons'],
         'Support & Feedback': ['Contact messages', 'Testimonials'],
         'Email Delivery': ['Email logs'],
+        'AI & Insights': ['Product Embeddings', 'Category Embeddings', 'User Semantic Profiles'],
     }
     
     new_app_list = []

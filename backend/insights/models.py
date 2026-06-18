@@ -1,8 +1,11 @@
 from django.db import models
-from store.models import Product
+from django.conf import settings
+from store.models import Product, Category
 
 
 class ProductEmbedding(models.Model):
+    """Stores Ollama embedding vector for product semantic search."""
+
     product = models.OneToOneField(
         Product,
         on_delete=models.CASCADE,
@@ -47,6 +50,66 @@ class ProductEmbedding(models.Model):
             models.Index(fields=['-updated_at']),
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.product.name} - {self.embedding_name}"
 
+
+class CategoryEmbedding(models.Model):
+    """Stores Ollama embedding vector for category semantic matching."""
+
+    category = models.OneToOneField(
+        Category,
+        on_delete=models.CASCADE,
+        related_name='embedding'
+    )
+
+    embedding_vector = models.JSONField(
+        null=True,
+        blank=True
+    )
+
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Category Embedding"
+        verbose_name_plural = "Category Embeddings"
+
+    def __str__(self) -> str:
+        return f"{self.category.name} Embedding"
+
+
+class UserSemanticProfile(models.Model):
+    """Stores the aggregated user interest preference vector and raw scores."""
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='semantic_profile'
+    )
+
+    # N-dimensional float array representing the user preference, normalized to unit length
+    preference_vector = models.JSONField(
+        null=True,
+        blank=True
+    )
+
+    # Key-value maps: { "category_id": score }
+    category_interests = models.JSONField(
+        default=dict,
+        blank=True
+    )
+
+    # Key-value maps: { "product_id": score }
+    product_interests = models.JSONField(
+        default=dict,
+        blank=True
+    )
+
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "User Semantic Profile"
+        verbose_name_plural = "User Semantic Profiles"
+
+    def __str__(self) -> str:
+        return f"Semantic Profile - {self.user.username}"

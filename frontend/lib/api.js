@@ -74,7 +74,7 @@ async function apiFetch(path, options = {}) {
   let authHeader = {};
   if (typeof window !== "undefined") {
     const token = localStorage.getItem("auth_token");
-    if (requireAuth && token) {
+    if (token) {
       authHeader = { Authorization: `Bearer ${token}` };
     }
   }
@@ -796,10 +796,20 @@ export async function getActiveCoupon() {
  * @param {number} limit - max results
  */
 export async function aiSearch(query, limit = 16) {
-  return apiFetch('/insights/chat/', {
+  return apiFetch('/insights/search/', {
     method: 'POST',
     body: JSON.stringify({ query, limit }),
     requireAuth: false,
+  });
+}
+
+/**
+ * Fetch the authenticated user's personalized category and product interest profile.
+ */
+export async function getUserInterests() {
+  return apiFetch('/insights/user-interests/', {
+    method: 'GET',
+    requireAuth: true,
   });
 }
 

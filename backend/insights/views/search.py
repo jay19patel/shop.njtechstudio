@@ -1,13 +1,13 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from insights.chat import SmartSearchChat
+from insights.services import SmartSearch
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-class SmartSearchChatView(APIView):
+class SmartSearchView(APIView):
     """AI-powered natural language product search"""
 
     def post(self, request):
@@ -22,10 +22,10 @@ class SmartSearchChatView(APIView):
             })
 
         try:
-            result = SmartSearchChat().chat(query=query, limit=limit)
+            result = SmartSearch().search(query=query, limit=limit)
             return Response(result)
         except Exception as e:
-            logger.error(f"Chat search error: {str(e)}")
+            logger.error(f"Smart search error: {str(e)}")
             return Response(
                 {'message': f'Search error: {str(e)}', 'results': [], 'total_results': 0},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,

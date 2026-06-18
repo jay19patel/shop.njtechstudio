@@ -80,8 +80,34 @@ class KafkaEventListener:
             event: Event data
         """
         formatted = self.format_event(topic, event)
-        print(formatted)
+        print(formatted, flush=True)
         logger.info(f"Event processed from topic {topic}", extra={"event_type": event.get('event_type')})
+
+        # Process user interests scoring based on interaction events
+        user_id = event.get('user_id')
+        event_type = event.get('event_type')
+        data = event.get('data', {})
+
+        if user_id:
+            try:
+                product_id = data.get('product_id')
+                if product_id and event_type in ['PRODUCT_VIEWED', 'PRODUCT_LIKED', 'PRODUCT_UNLIKED', 'CART_ITEM_ADDED']:
+                    from insights.services.recommendation import RecommendationService
+                    RecommendationService.update_user_profile(user_id=int(user_id), product_id=int(product_id), event_type=event_type)
+                elif event_type == 'ORDER_CREATED':
+                    order_id = data.get('order_id')
+                    if order_id:
+                        from store.models import Order
+                        from insights.services.recommendation import RecommendationService
+                        try:
+                            order = Order.objects.prefetch_related('items__product').get(id=order_id)
+                            for item in order.items.all():
+                                if item.product:
+                                    RecommendationService.update_user_profile(user_id=int(user_id), product_id=item.product.id, event_type='ORDER_CREATED')
+                        except Order.DoesNotExist:
+                            logger.warning(f"Order {order_id} not found in DB to update interests.")
+            except Exception as e:
+                logger.error(f"Error handling user interests in Kafka listener: {str(e)}")
 
     def run(self):
         """Start listening to events."""
@@ -91,7 +117,7 @@ class KafkaEventListener:
 
         try:
             logger.info("Kafka listener started, waiting for events...")
-            print("\n🎯 Waiting for events...\n")
+            print("\n🎯 Waiting for events...\n", flush=True)
 
             for message in self.consumer:
                 try:
@@ -104,7 +130,7 @@ class KafkaEventListener:
 
         except KeyboardInterrupt:
             logger.info("Listener stopped by user")
-            print("\n\n✋ Listener stopped by user")
+            print("\n\n✋ Listener stopped by user", flush=True)
         except Exception as e:
             logger.error(f"Unexpected error in listener: {e}")
         finally:

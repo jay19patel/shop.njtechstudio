@@ -1,20 +1,31 @@
 """Cart-related event handlers."""
 import logging
+from typing import Any
 from django.dispatch import receiver
+from django.http import HttpRequest
 
 from store.signals import cart_item_added
 from insights.kafka import get_producer
-from insights.analytics import extract_user_info
+from insights.services.request_parser import RequestParserService
 
 logger = logging.getLogger(__name__)
 
 
 @receiver(cart_item_added)
-def track_cart_item_added(sender, request, user_id, product_id, product_name, quantity, price, **kwargs):
-    """Track cart item added event when store emits cart_item_added signal."""
+def track_cart_item_added(
+    sender: Any,
+    request: HttpRequest,
+    user_id: int,
+    product_id: int,
+    product_name: str,
+    quantity: int,
+    price: float,
+    **kwargs: Any,
+) -> None:
+    """Track cart item added event and publish it to Kafka."""
     try:
         producer = get_producer()
-        user_info = extract_user_info(request, request.user)
+        user_info = RequestParserService.extract_user_info(request, request.user)
 
         producer.send_cart_item_added(
             user_id=user_id,
@@ -25,7 +36,7 @@ def track_cart_item_added(sender, request, user_id, product_id, product_name, qu
             user_info=user_info,
         )
         logger.info("cart_item_added_signal",
-                   extra={"product_id": product_id, "user_id": user_id, "qty": quantity})
+                    extra={"product_id": product_id, "user_id": user_id, "qty": quantity})
     except Exception as e:
         logger.error("failed_to_track_cart_item_added",
-                    extra={"product_id": product_id, "user_id": user_id, "error": str(e)})
+                     extra={"product_id": product_id, "user_id": user_id, "error": str(e)})

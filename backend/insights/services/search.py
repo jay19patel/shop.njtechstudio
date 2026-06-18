@@ -4,7 +4,7 @@ from typing import Dict, Any
 
 from langchain_core.runnables import RunnableLambda, RunnablePassthrough
 
-from insights.utils import EmbeddingService
+from insights.services.embeddings import EmbeddingService
 
 logger = logging.getLogger(__name__)
 
@@ -176,19 +176,19 @@ def _build_message(query: str, intent: Dict, count: int) -> str:
 # Main search class
 # ─────────────────────────────────────────────────────────────────────────────
 
-class SmartSearchChat:
+class SmartSearch:
 
     def __init__(self):
         self.service = EmbeddingService()
 
-    def chat(self, query: str, limit: int = 16) -> Dict[str, Any]:
+    def search(self, query: str, limit: int = 16) -> Dict[str, Any]:
         query = query.strip()
         if not query:
             return {"message": "What are you looking for?", "results": [], "total_results": 0}
 
         # Step 1: parse intent through LangChain chain
         intent = parse_intent(query)
-        logger.info(f"Intent parsed: {intent}")
+        logger.info(f"Search intent parsed: {intent}")
 
         has_price_filter = intent["price_min"] is not None or intent["price_max"] is not None
         has_category_filter = intent["category_id"] or intent["category_name"]

@@ -20,6 +20,7 @@ export const metadata = {
 
 import { AuthProvider } from "../context/AuthContext";
 import MarqueeBanner from "../components/MarqueeBanner";
+import ChatBot from "../components/ChatBot";
 
 export default function RootLayout({ children }) {
   return (
@@ -33,6 +34,7 @@ export default function RootLayout({ children }) {
             <CartProvider>
               <MarqueeBanner />
               {children}
+              <ChatBot />
             </CartProvider>
           </AuthProvider>
         </GoogleOAuthProvider>

@@ -1,3 +1,4 @@
-from .embeddings import SmartSearchChatView
+from .search import SmartSearchView
+from .user_interests import UserInterestsView
 
-__all__ = ['SmartSearchChatView']
+__all__ = ['SmartSearchView', 'UserInterestsView']
