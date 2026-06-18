@@ -195,3 +195,97 @@ class RecommendationServiceTests(TestCase):
         self.assertEqual(similar_cats[0]['category_id'], cat2.id)
         self.assertEqual(similar_cats[0]['name'], 'Appliances')
         self.assertGreater(similar_cats[0]['score'], 0.0)
+
+    def test_reset_user_profile(self) -> None:
+        """Verify reset_user_profile clears preference vector and interest scores."""
+        profile = UserSemanticProfile.objects.create(
+            user=self.user,
+            preference_vector=self.p_vector,
+            category_interests={'1': 5.0},
+            product_interests={'1': 10.0}
+        )
+
+        RecommendationService.reset_user_profile(self.user.id)
+        profile.refresh_from_db()
+
+        self.assertIsNone(profile.preference_vector)
+        self.assertEqual(profile.category_interests, {})
+        self.assertEqual(profile.product_interests, {})
+
+
+from rest_framework.test import APITestCase
+from django.urls import reverse
+
+class UserInterestsViewTests(APITestCase):
+    """Test suite for UserInterestsView API endpoint."""
+
+    def setUp(self) -> None:
+        self.user = User.objects.create_user(
+            username='apiuser',
+            email='api@example.com',
+            password='testpassword'
+        )
+        self.client.force_authenticate(user=self.user)
+
+    def test_delete_user_interests_endpoint(self) -> None:
+        """Verify DELETE request successfully resets interest profile."""
+        profile = UserSemanticProfile.objects.create(
+            user=self.user,
+            preference_vector=[0.1] * 768,
+            category_interests={'1': 5.0},
+            product_interests={'1': 10.0}
+        )
+
+        url = reverse('user-interests')
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['success'], 'User interest profile cleared')
+
+        profile.refresh_from_db()
+        self.assertIsNone(profile.preference_vector)
+        self.assertEqual(profile.category_interests, {})
+        self.assertEqual(profile.product_interests, {})
+
+
+class AdminDemandForecastViewTests(APITestCase):
+    """Test suite for AdminDemandForecastView API endpoint."""
+
+    def setUp(self) -> None:
+        self.normal_user = User.objects.create_user(
+            username='normaluser',
+            email='normal@example.com',
+            password='testpassword'
+        )
+        self.admin_user = User.objects.create_superuser(
+            username='adminuser',
+            email='admin@example.com',
+            password='testpassword'
+        )
+
+    def test_get_demand_forecast_unauthorized_for_normal_user(self) -> None:
+        """Verify normal authenticated users cannot access the demand forecast endpoint."""
+        self.client.force_authenticate(user=self.normal_user)
+        url = reverse('admin-demand-forecast')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_get_demand_forecast_success_for_admin_user(self) -> None:
+        """Verify superusers can retrieve aggregate demand forecast successfully."""
+        self.client.force_authenticate(user=self.admin_user)
+        # Create some profiles with interests
+        UserSemanticProfile.objects.create(
+            user=self.normal_user,
+            product_interests={'1': 12.5},
+            category_interests={'1': 4.0}
+        )
+        UserSemanticProfile.objects.create(
+            user=self.admin_user,
+            product_interests={'1': 5.0},
+            category_interests={'1': 2.0}
+        )
+
+        url = reverse('admin-demand-forecast')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('product_demand', response.data)
+        self.assertIn('category_demand', response.data)

@@ -24,3 +24,16 @@ class UserInterestsView(APIView):
                 {"error": "Failed to fetch user interest profile"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+    def delete(self, request) -> Response:
+        """Handle DELETE request to reset/clear user interest profile."""
+        try:
+            user_id = request.user.id
+            RecommendationService.reset_user_profile(user_id=user_id)
+            return Response({"success": "User interest profile cleared"}, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.error(f"Error resetting user interests: {str(e)}")
+            return Response(
+                {"error": "Failed to reset user interest profile"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

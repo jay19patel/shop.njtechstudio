@@ -813,6 +813,26 @@ export async function getUserInterests() {
   });
 }
 
+/**
+ * Reset/Clear the user's semantic profile interests.
+ */
+export async function resetUserInterests() {
+  return apiFetch('/insights/user-interests/', {
+    method: 'DELETE',
+    requireAuth: true,
+  });
+}
+
+/**
+ * Fetch aggregate product and category demand forecasting insights (Admin only).
+ */
+export async function getAdminDemandForecast() {
+  return apiFetch('/insights/admin/demand-forecast/', {
+    method: 'GET',
+    requireAuth: true,
+  });
+}
+
 // ==========================================
 // LIKES APIs
 // ==========================================

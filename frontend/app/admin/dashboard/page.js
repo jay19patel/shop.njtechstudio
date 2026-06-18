@@ -100,6 +100,9 @@ export default function AdminDashboardPage() {
               <Link href="/admin/products" className="px-4 py-2 bg-slate-900 text-white text-xs font-bold uppercase tracking-wider rounded-lg hover:bg-slate-800 transition-colors flex items-center gap-2">
                 <Package className="w-3.5 h-3.5" /> Products
               </Link>
+              <Link href="/admin/insights" className="px-4 py-2 bg-white border border-slate-200 text-slate-700 text-xs font-bold uppercase tracking-wider rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2">
+                <TrendingUp className="w-3.5 h-3.5" /> AI Insights
+              </Link>
               <Link href="/admin/customer" className="px-4 py-2 bg-white border border-slate-200 text-slate-700 text-xs font-bold uppercase tracking-wider rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2">
                 <Users className="w-3.5 h-3.5" /> Customers
               </Link>

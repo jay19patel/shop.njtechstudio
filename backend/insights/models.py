@@ -113,3 +113,12 @@ class UserSemanticProfile(models.Model):
 
     def __str__(self) -> str:
         return f"Semantic Profile - {self.user.username}"
+
+
+class ProductDemand(Product):
+    """Proxy model to display aggregate demand forecasting in the Django Admin."""
+
+    class Meta:
+        proxy = True
+        verbose_name = "Demand & Stock Forecast"
+        verbose_name_plural = "Demand & Stock Forecasts"

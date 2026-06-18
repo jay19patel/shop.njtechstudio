@@ -311,3 +311,20 @@ class RecommendationService:
         except Exception as e:
             logger.error(f"Error retrieving similar categories for category {category_id}: {str(e)}")
             return []
+
+    @classmethod
+    def reset_user_profile(cls, user_id: int) -> None:
+        """
+        Reset user's semantic profile interests and preference vector.
+        """
+        try:
+            profile = UserSemanticProfile.objects.filter(user_id=user_id).first()
+            if profile:
+                profile.preference_vector = None
+                profile.category_interests = {}
+                profile.product_interests = {}
+                profile.save()
+                logger.info(f"Reset semantic profile for user {user_id}")
+        except Exception as e:
+            logger.error(f"Error resetting semantic profile for user {user_id}: {str(e)}")
+            raise e
